@@ -53,6 +53,7 @@ Thumbs.db
 
 # Kaggle
 kaggle.json
+lab3_colab.ipynb
 
 # Claude AI instructions (local only)
 .claude/
