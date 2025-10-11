@@ -4,9 +4,35 @@ This directory contains Jupyter notebooks for training on Google Colab.
 
 ## 📓 Available Notebooks
 
-### 1. `A100_Ultra_Optimized.ipynb` ⚡ **RECOMMENDED**
+### 1. `A100_Ultra_Optimized_Kaggle.ipynb` ⚡ **MOST RECOMMENDED**
 
-**最推薦使用！榨乾A100所有性能的極致優化版本**
+**最推薦使用！從Kaggle直接下載數據 + 榨乾A100所有性能**
+
+**Features**:
+- ✅ **Kaggle API integration** - Direct dataset download
+- ✅ Automatic data organization
+- ✅ One-click Kaggle submission
+- ✅ Maximum batch size (48)
+- ✅ Gradient accumulation (effective batch=192)
+- ✅ bfloat16 AMP + TF32
+- ✅ torch.compile optimization
+- ✅ 95-98% GPU utilization
+
+**Performance**:
+- Training time: **~1.5 hours**
+- Throughput: **400-500 images/sec**
+- Expected F1: **0.87-0.89** (with TTA)
+
+**When to use**:
+- Your data is on Kaggle ✓ **MOST COMMON**
+- You want easiest setup ✓
+- You want direct Kaggle submission ✓
+
+---
+
+### 2. `A100_Ultra_Optimized.ipynb` ⚡ **For Google Drive Data**
+
+**使用Google Drive數據的極致優化版本**
 
 **Features**:
 - ✅ Maximum batch size (48 vs 8 on RTX 3050) - **6x larger**
@@ -66,37 +92,38 @@ This is the original notebook. Use the updated versions above instead.
 
 ## 🚀 Quick Start
 
-### Step 1: Upload Your Data to Google Drive
+### Step 1: Get Kaggle API Credentials
 
-Create this structure in Google Drive:
-```
-MyDrive/chest-xray-data/
-  ├── train_images/
-  ├── val_images/
-  └── test_images/
-```
+1. Go to [Kaggle Account Settings](https://www.kaggle.com/settings/account)
+2. Scroll to "API" section
+3. Click "Create New Token"
+4. Download `kaggle.json`
 
 ### Step 2: Open Notebook in Colab
 
 1. Go to [Google Colab](https://colab.research.google.com/)
 2. Click "File" → "Upload notebook"
-3. Choose `A100_Ultra_Optimized.ipynb` (recommended)
+3. Choose `A100_Ultra_Optimized_Kaggle.ipynb` (recommended)
 4. Change runtime type to **GPU: A100**
 
-### Step 3: Run All Cells
+### Step 3: Upload Kaggle Credentials & Run
 
-Press "Runtime" → "Run all" and wait ~1.5 hours!
+1. When prompted, upload your `kaggle.json`
+2. Dataset will download automatically
+3. Press "Runtime" → "Run all"
+4. Wait ~1.5 hours for training!
 
 ---
 
 ## 📊 Performance Comparison
 
-| Notebook | GPU | Batch Size | Training Time | Throughput | Memory | Expected F1 |
-|----------|-----|------------|---------------|------------|--------|-------------|
-| Ultra Optimized ⚡ | A100 | 48 (×4 accum) | **1.5h** | **450 img/s** | 37/40GB | **0.87-0.89** |
-| Stage1 Standard 📚 | A100 | 24 | 2h | 300 img/s | 28/40GB | 0.85-0.87 |
-| Legacy 📋 | A100 | 16 | 2.5h | 250 img/s | 20/40GB | 0.83-0.85 |
-| Local (RTX 3050) | 3050 | 8 | 4-5h | 150 img/s | 6/8GB | 0.80-0.82 |
+| Notebook | Data Source | GPU | Training Time | Expected F1 |
+|----------|-------------|-----|---------------|-------------|
+| **Ultra Kaggle ⚡** | Kaggle API | A100 | **1.5h** | **0.87-0.89** |
+| Ultra Drive ⚡ | Google Drive | A100 | **1.5h** | **0.87-0.89** |
+| Stage1 Standard 📚 | Google Drive | A100 | 2h | 0.85-0.87 |
+| Legacy 📋 | Google Drive | A100 | 2.5h | 0.83-0.85 |
+| Local (RTX 3050) | Local files | 3050 | 4-5h | 0.80-0.82 |
 
 ---
 
