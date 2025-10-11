@@ -1,0 +1,57 @@
+# 實驗 2: EfficientNetV2-S + 320px + SWA
+# 預期提升: +4-6% (目標: 84-86%)
+# 訓練時間: ~3 hours
+# GPU 記憶體: ~3.9GB
+
+inherits: configs/base.yaml
+
+model:
+  name: efficientnet_v2_s
+  img_size: 320
+
+train:
+  seed: 123
+  epochs: 30
+  batch_size: 8
+  num_workers: 4
+  lr: 0.00008
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 4
+  use_weighted_sampler: true
+
+  # Focal Loss with balanced weights
+  loss: focal_improved
+  focal_gamma: 2.0
+  focal_alpha: [1.0, 2.0, 2.5, 4.0]  # 更高的 COVID-19 權重
+  label_smoothing: 0.12
+
+  # Mixup/CutMix with higher probability
+  use_mixup: true
+  mixup_alpha: 1.0
+  mixup_prob: 0.6
+
+  # SWA for better generalization
+  use_swa: true
+  swa_start: 23
+  swa_lr: 0.00003
+
+  # Strong augmentation
+  advanced_aug: true
+  aug_rotation: 25
+  aug_translate: 0.18
+  aug_scale_min: 0.8
+  aug_scale_max: 1.2
+  aug_shear: 18
+  random_erasing_prob: 0.3
+
+perf:
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+out:
+  dir: outputs/exp2_efficientnetv2
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/submission_exp2.csv

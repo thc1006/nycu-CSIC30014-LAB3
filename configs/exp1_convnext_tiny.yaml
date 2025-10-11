@@ -1,0 +1,52 @@
+# 實驗 1: ConvNeXt-Tiny + 288px + Improved Focal Loss
+# 預期提升: +3-5% (目標: 83-85%)
+# 訓練時間: ~2.5 hours
+# GPU 記憶體: ~3.8GB
+
+inherits: configs/base.yaml
+
+model:
+  name: convnext_tiny
+  img_size: 288
+
+train:
+  seed: 42
+  epochs: 25
+  batch_size: 10
+  num_workers: 4
+  lr: 0.0001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 3
+  use_weighted_sampler: true
+
+  # Improved Focal Loss (針對類別不平衡)
+  loss: focal_improved
+  focal_gamma: 2.5
+  focal_alpha: [1.0, 1.8, 2.2, 3.0]  # [normal, bacteria, virus, COVID-19]
+  label_smoothing: 0.1
+
+  # Mixup/CutMix
+  use_mixup: true
+  mixup_alpha: 0.8
+  mixup_prob: 0.5
+
+  # Advanced augmentation
+  advanced_aug: true
+  aug_rotation: 20
+  aug_translate: 0.15
+  aug_scale_min: 0.85
+  aug_scale_max: 1.15
+  aug_shear: 15
+  random_erasing_prob: 0.25
+
+perf:
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+out:
+  dir: outputs/exp1_convnext_tiny
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/submission_exp1.csv

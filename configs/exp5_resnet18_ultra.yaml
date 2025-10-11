@@ -1,0 +1,57 @@
+# 實驗 5: ResNet18 + 384px + 超強增強 + 極長訓練
+# 預期提升: +3-5% (目標: 83-85%)
+# 訓練時間: ~1.5 hours (最快)
+# GPU 記憶體: ~3.0GB
+
+inherits: configs/base.yaml
+
+model:
+  name: resnet18
+  img_size: 384
+
+train:
+  seed: 999
+  epochs: 50
+  batch_size: 8
+  num_workers: 4
+  lr: 0.0003
+  weight_decay: 0.00012
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 8
+  use_weighted_sampler: true
+
+  # Focal Loss with extreme COVID-19 weight
+  loss: focal_improved
+  focal_gamma: 2.8
+  focal_alpha: [1.0, 1.4, 1.8, 6.0]  # 超高 COVID-19 權重
+  label_smoothing: 0.15
+
+  # Mixup/CutMix
+  use_mixup: true
+  mixup_alpha: 1.2
+  mixup_prob: 0.65
+
+  # SWA
+  use_swa: true
+  swa_start: 40
+  swa_lr: 0.00005
+
+  # Ultra strong augmentation
+  advanced_aug: true
+  aug_rotation: 35
+  aug_translate: 0.22
+  aug_scale_min: 0.7
+  aug_scale_max: 1.3
+  aug_shear: 22
+  random_erasing_prob: 0.4
+
+perf:
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+out:
+  dir: outputs/exp5_resnet18_ultra
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/submission_exp5.csv

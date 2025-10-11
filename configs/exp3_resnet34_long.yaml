@@ -1,0 +1,57 @@
+# 實驗 3: ResNet34 + 384px + 長訓練
+# 預期提升: +5-7% (目標: 85-87%)
+# 訓練時間: ~2 hours
+# GPU 記憶體: ~3.5GB
+
+inherits: configs/base.yaml
+
+model:
+  name: resnet34
+  img_size: 384
+
+train:
+  seed: 456
+  epochs: 35
+  batch_size: 6
+  num_workers: 4
+  lr: 0.0002
+  weight_decay: 0.00015
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 5
+  use_weighted_sampler: true
+
+  # Focal Loss with COVID-19 boost
+  loss: focal_improved
+  focal_gamma: 3.0
+  focal_alpha: [1.0, 1.5, 2.0, 5.0]  # 極高的 COVID-19 權重
+  label_smoothing: 0.08
+
+  # Mixup/CutMix
+  use_mixup: true
+  mixup_alpha: 0.9
+  mixup_prob: 0.55
+
+  # SWA
+  use_swa: true
+  swa_start: 28
+  swa_lr: 0.00004
+
+  # Very strong augmentation
+  advanced_aug: true
+  aug_rotation: 30
+  aug_translate: 0.2
+  aug_scale_min: 0.75
+  aug_scale_max: 1.25
+  aug_shear: 20
+  random_erasing_prob: 0.35
+
+perf:
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+out:
+  dir: outputs/exp3_resnet34
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/submission_exp3.csv
