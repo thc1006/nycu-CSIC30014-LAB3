@@ -1,0 +1,44 @@
+# Global base config (v2, Windows paths)
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+
+  # CSVs (expected to exist in C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data)
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_data.csv     # if missing, we'll auto-generate from images_dir_test
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 10
+  batch_size: 16
+  num_workers: 4
+  lr: 0.0003
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+  use_weighted_sampler: true
+  loss: ce                  # ce | focal
+  label_smoothing: 0.05
+
+perf:
+  amp_dtype: bf16           # bf16 | fp16 | none
+  channels_last: true
+  cudnn_benchmark: false
+  tf32: medium              # high | medium | float32
+
+model:
+  name: resnet18            # resnet18 | efficientnet_b0 | convnext_tiny | efficientnet_v2_s
+  img_size: 224
+
+out:
+  dir: outputs/run1
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission.csv

@@ -1,0 +1,13 @@
+# Local (RTX 3050) overrides
+inherits: configs/base.yaml
+train:
+  epochs: 8
+  batch_size: 12
+perf:
+  amp_dtype: bf16
+  cudnn_benchmark: false
+model:
+  name: resnet18
+  img_size: 224
+out:
+  dir: outputs/run1

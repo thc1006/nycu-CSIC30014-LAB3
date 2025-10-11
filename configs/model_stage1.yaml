@@ -1,0 +1,55 @@
+# Stage 1: Core Optimization for 85-87% Score
+# ConvNeXt-Base + 512px + Focal Loss + Mixup/CutMix
+
+inherits: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/configs/base.yaml
+
+model:
+  name: convnext_base       # Upgraded from resnet18
+  img_size: 512             # Upgraded from 224
+
+train:
+  seed: 42
+  epochs: 30                # Increased from 10
+  batch_size: 8             # Reduced due to larger image size (use 16-24 on A100)
+  num_workers: 4
+  lr: 0.0001                # Reduced for larger model
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 3          # Increased from 1
+  use_weighted_sampler: true
+
+  # Focal Loss with targeted class weights
+  loss: focal_improved
+  focal_gamma: 2.0
+  focal_alpha: [1.0, 1.5, 2.0, 1.2]  # [normal, bacteria, virus, COVID-19]
+  label_smoothing: 0.1
+
+  # Mixup/CutMix augmentation
+  use_mixup: true
+  mixup_alpha: 1.0
+  mixup_prob: 0.5           # 50% of batches use mixup/cutmix
+
+  # Stochastic Weight Averaging
+  use_swa: true
+  swa_start: 25             # Start SWA at epoch 25
+  swa_lr: 0.00005
+
+  # Advanced augmentation
+  advanced_aug: true
+  aug_rotation: 15
+  aug_translate: 0.1
+  aug_scale_min: 0.9
+  aug_scale_max: 1.1
+  aug_shear: 10
+  random_erasing_prob: 0.3
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true     # Enable for A100
+  tf32: high
+
+out:
+  dir: outputs/stage1_convnext512
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_stage1.csv

@@ -1,0 +1,16 @@
+# Colab A100 overrides
+inherits: configs/base.yaml
+train:
+  epochs: 20
+  batch_size: 32
+  num_workers: 8
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+model:
+  name: convnext_tiny
+  img_size: 384
+out:
+  dir: outputs/a100_run
