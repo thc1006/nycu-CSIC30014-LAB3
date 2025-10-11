@@ -62,7 +62,7 @@ def run_experiment(exp_num, exp):
     result = subprocess.run(train_cmd, shell=True)
 
     if result.returncode != 0:
-        print(f"\n❌ 訓練失敗！跳過此實驗。")
+        print(f"\n[X] 訓練失敗！跳過此實驗。")
         return False
 
     # 提取checkpoint路徑
@@ -76,17 +76,17 @@ def run_experiment(exp_num, exp):
     result = subprocess.run(tta_cmd, shell=True)
 
     if result.returncode != 0:
-        print(f"\n❌ TTA 預測失敗！")
+        print(f"\n[X] TTA 預測失敗！")
         return False
 
     elapsed = time.time() - start_time
-    print(f"\n✅ {exp['name']} 完成！")
-    print(f"⏱️  實際耗時: {elapsed/3600:.2f} hours")
+    print(f"\n[OK] {exp['name']} 完成！")
+    print(f"實際耗時: {elapsed/3600:.2f} hours")
 
     return True
 
 def main():
-    print_banner("🚀 開始執行所有實驗")
+    print_banner("開始執行所有實驗")
     print("總共 5 個實驗")
     print("預計總時間: 約 11-12 小時")
     print()
@@ -109,22 +109,22 @@ def main():
     total_time = time.time() - overall_start
 
     # 最終報告
-    print_banner("🎉 所有實驗執行完畢")
+    print_banner("所有實驗執行完畢")
     print(f"總耗時: {total_time/3600:.2f} hours")
-    print(f"\n✅ 成功: {len(completed)}/{len(EXPERIMENTS)}")
+    print(f"\n[成功]: {len(completed)}/{len(EXPERIMENTS)}")
     for name in completed:
         print(f"  - {name}")
 
     if failed:
-        print(f"\n❌ 失敗: {len(failed)}/{len(EXPERIMENTS)}")
+        print(f"\n[失敗]: {len(failed)}/{len(EXPERIMENTS)}")
         for name in failed:
             print(f"  - {name}")
 
-    print("\n📁 生成的提交檔案:")
+    print("\n生成的提交檔案:")
     for i in range(1, 6):
         sub_file = f"submission_exp{i}.csv"
         if os.path.exists(sub_file):
-            print(f"  ✓ {sub_file}")
+            print(f"  [v] {sub_file}")
 
     print("\n下一步: 執行 ensemble.py 來合併所有模型的預測！")
 
