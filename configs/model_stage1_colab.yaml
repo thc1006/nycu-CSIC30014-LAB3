@@ -1,7 +1,7 @@
-# Stage 1: Core Optimization for 85-87% Score
+# Stage 1: Core Optimization for 85-87% Score (Colab version)
 # ConvNeXt-Base + 512px + Focal Loss + Mixup/CutMix
 
-inherits: configs/base.yaml
+inherits: configs/base_colab.yaml
 
 model:
   name: convnext_base       # Upgraded from resnet18
@@ -10,7 +10,7 @@ model:
 train:
   seed: 42
   epochs: 30                # Increased from 10
-  batch_size: 8             # Reduced due to larger image size (use 16-24 on A100)
+  batch_size: 48            # A100-optimized (use 8 for local RTX 3050)
   num_workers: 4
   lr: 0.0001                # Reduced for larger model
   weight_decay: 0.0001
@@ -44,6 +44,16 @@ train:
   aug_shear: 10
   random_erasing_prob: 0.3
 
+  # Gradient accumulation for A100
+  gradient_accumulation_steps: 4  # Effective batch = 192
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 2
+
+  # A100 optimizations
+  use_fused_optimizer: true
+  compile_model: true
+
 perf:
   amp_dtype: bf16
   channels_last: true
@@ -51,5 +61,5 @@ perf:
   tf32: high
 
 out:
-  dir: outputs/stage1_convnext512
-  submission_path: data/submission_stage1.csv
+  dir: outputs/a100_ultra
+  submission_path: submission_a100_ultra.csv
