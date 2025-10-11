@@ -1,149 +1,108 @@
-# Notebooks Guide
+# 📓 Notebooks Guide
 
 This directory contains Jupyter notebooks for training on Google Colab.
 
-## 📓 Available Notebooks
+---
 
-### 1. `A100_Ultra_Optimized_Kaggle.ipynb` ⚡ **MOST RECOMMENDED**
+## 🚀 **RECOMMENDED: Use This Notebook**
 
-**最推薦使用！從Kaggle直接下載數據 + 榨乾A100所有性能**
+### **`Colab_A100_Final.ipynb`** ⭐ **START HERE**
 
-**Features**:
-- ✅ **Kaggle API integration** - Direct dataset download
-- ✅ Automatic data organization
-- ✅ One-click Kaggle submission
-- ✅ Maximum batch size (48)
-- ✅ Gradient accumulation (effective batch=192)
-- ✅ bfloat16 AMP + TF32
-- ✅ torch.compile optimization
-- ✅ 95-98% GPU utilization
+**This is the production-ready, clean notebook for Google Colab!**
 
-**Performance**:
-- Training time: **~1.5 hours**
-- Throughput: **400-500 images/sec**
-- Expected F1: **0.87-0.89** (with TTA)
+#### ✨ Features:
+- ✅ **Complete end-to-end workflow** (12 simple steps)
+- ✅ **Zero configuration needed** - just run all cells
+- ✅ **Automatic data download** from Kaggle
+- ✅ **Ultra-optimized for A100** (95-98% GPU utilization)
+- ✅ **State-of-the-art model**: ConvNeXt-Base @ 512px
+- ✅ **Expected score: 0.87-0.89** (Macro F1)
 
-**When to use**:
-- Your data is on Kaggle ✓ **MOST COMMON**
-- You want easiest setup ✓
-- You want direct Kaggle submission ✓
+#### 📋 Quick Start:
+1. **Open in Colab**:
+   - Go to: https://colab.research.google.com/
+   - Upload `Colab_A100_Final.ipynb`
+   - Or use: `File` → `Open notebook` → `GitHub` → paste repo URL
+
+2. **Select A100 GPU**:
+   - `Runtime` → `Change runtime type`
+   - Hardware accelerator: **GPU**
+   - GPU type: **A100** (recommended) or T4
+
+3. **Get Kaggle API key**:
+   - Go to: https://www.kaggle.com/settings
+   - Scroll to "API" section
+   - Click "Create New API Token"
+   - Download `kaggle.json`
+
+4. **Run all cells**:
+   - `Runtime` → `Run all`
+   - Upload `kaggle.json` when prompted
+   - Wait ~1.5 hours (A100) or ~5 hours (T4)
+
+5. **Download submission**:
+   - Last cell will download `submission_a100_ultra.csv`
+   - Submit to Kaggle competition
+
+#### ⏱️ Time Required:
+- **Setup**: 5-10 minutes
+- **Training**: ~1.5 hours (A100) or ~5 hours (T4)
+- **Inference**: 5 minutes
+
+#### 🎯 Expected Performance:
+- **Val F1**: 0.86-0.87
+- **Public Score**: 0.87-0.89
+- **GPU Throughput**: 400-500 images/sec
+- **Memory Usage**: 35-38GB / 40GB
 
 ---
 
-### 2. `A100_Ultra_Optimized.ipynb` ⚡ **For Google Drive Data**
+## 📚 Other Notebooks (Reference/Advanced)
 
-**使用Google Drive數據的極致優化版本**
+### `A100_Ultra_Optimized_Kaggle.ipynb`
+- Original development notebook
+- More verbose with detailed explanations
+- Use if you want to understand each optimization step
 
-**Features**:
-- ✅ Maximum batch size (48 vs 8 on RTX 3050) - **6x larger**
-- ✅ Gradient accumulation (effective batch=192) - **24x effective**
-- ✅ bfloat16 AMP (312 TFLOPS on A100)
-- ✅ TF32 enabled (19.5 TFLOPS)
-- ✅ torch.compile for JIT compilation
-- ✅ Fused AdamW optimizer
-- ✅ Optimized DataLoader (4 workers + pin_memory)
-- ✅ cuDNN auto-tuning
-- ✅ Channels last memory format
-- ✅ 95-98% GPU utilization
+### `A100_Ultra_Optimized.ipynb`
+- For Google Drive-based data loading
+- Use if you already have data uploaded to Drive
 
-**Performance**:
-- Training time: **~1.5 hours** (vs 4-5 hours on RTX 3050)
-- Throughput: **400-500 images/sec**
-- Memory usage: **37GB / 40GB** (maxed out)
-- Expected F1: **0.87-0.89** (with TTA)
-
-**When to use**:
-- You have A100 GPU access ✓
-- You want maximum performance ✓
-- You want to finish training ASAP ✓
+### `Stage1_Colab_Training.ipynb`
+- Beginner-friendly version with step-by-step guide
+- Slower but easier to understand
 
 ---
 
-### 2. `Stage1_Colab_Training.ipynb` 📚 **BEGINNER-FRIENDLY**
+## 🔍 Notebook Comparison
 
-**更容易理解的標準版本，適合初學者**
-
-**Features**:
-- ✅ Step-by-step explanations
-- ✅ Standard batch size (24)
-- ✅ Simpler configuration
-- ✅ Good for learning
-
-**Performance**:
-- Training time: **~2 hours**
-- Throughput: **~300 images/sec**
-- Memory usage: **28GB / 40GB**
-- Expected F1: **0.85-0.87** (with TTA)
-
-**When to use**:
-- You're new to Colab ✓
-- You want to understand each step ✓
-- You're okay with slightly longer training ✓
-
----
-
-### 3. `A100_Final_Train.ipynb` 📋 **LEGACY**
-
-**舊版本，保留供參考**
-
-This is the original notebook. Use the updated versions above instead.
-
----
-
-## 🚀 Quick Start
-
-### Step 1: Get Kaggle API Credentials
-
-1. Go to [Kaggle Account Settings](https://www.kaggle.com/settings/account)
-2. Scroll to "API" section
-3. Click "Create New Token"
-4. Download `kaggle.json`
-
-### Step 2: Open Notebook in Colab
-
-1. Go to [Google Colab](https://colab.research.google.com/)
-2. Click "File" → "Upload notebook"
-3. Choose `A100_Ultra_Optimized_Kaggle.ipynb` (recommended)
-4. Change runtime type to **GPU: A100**
-
-### Step 3: Upload Kaggle Credentials & Run
-
-1. When prompted, upload your `kaggle.json`
-2. Dataset will download automatically
-3. Press "Runtime" → "Run all"
-4. Wait ~1.5 hours for training!
-
----
-
-## 📊 Performance Comparison
-
-| Notebook | Data Source | GPU | Training Time | Expected F1 |
-|----------|-------------|-----|---------------|-------------|
-| **Ultra Kaggle ⚡** | Kaggle API | A100 | **1.5h** | **0.87-0.89** |
-| Ultra Drive ⚡ | Google Drive | A100 | **1.5h** | **0.87-0.89** |
-| Stage1 Standard 📚 | Google Drive | A100 | 2h | 0.85-0.87 |
-| Legacy 📋 | Google Drive | A100 | 2.5h | 0.83-0.85 |
-| Local (RTX 3050) | Local files | 3050 | 4-5h | 0.80-0.82 |
+| Notebook | Best For | Training Time | Expected F1 | Complexity |
+|----------|----------|---------------|-------------|------------|
+| **Colab_A100_Final.ipynb** ⭐ | **Production use** | **1.5h (A100)** | **0.87-0.89** | **Simple** |
+| A100_Ultra_Optimized_Kaggle.ipynb | Learning optimizations | 1.5h (A100) | 0.87-0.89 | Medium |
+| A100_Ultra_Optimized.ipynb | Google Drive users | 1.5h (A100) | 0.87-0.89 | Medium |
+| Stage1_Colab_Training.ipynb | Beginners | 2h (A100) | 0.85-0.87 | Simple |
 
 ---
 
 ## 💡 Tips for Best Results
 
 ### Before Training:
-1. ✅ Verify you have **A100 GPU** selected
-2. ✅ Upload images to Google Drive first
-3. ✅ Have stable internet connection
-4. ✅ Keep Colab tab open during training
+1. ✅ **Always select A100 GPU** (if available)
+2. ✅ **Have Kaggle API token ready** (kaggle.json)
+3. ✅ **Stable internet connection** for data download
+4. ✅ **Keep Colab tab open** during training
 
 ### During Training:
-1. Monitor GPU usage with `!nvidia-smi`
-2. Watch throughput (should be 400-500 img/s for Ultra)
-3. Check loss is decreasing smoothly
+1. Monitor GPU usage: `Resources` → `View resources`
+2. GPU utilization should be **95-98%**
+3. Throughput should be **400-500 img/sec**
+4. Don't close the browser tab!
 
 ### After Training:
-1. Download `submission.csv` immediately
-2. Optionally download `best.pt` checkpoint
-3. Submit to Kaggle and check score
+1. **Download submission.csv immediately** (before session expires)
+2. Optionally download `outputs/a100_ultra/best.pt` (model checkpoint)
+3. Submit to Kaggle and check leaderboard
 
 ---
 
@@ -153,36 +112,50 @@ This is the original notebook. Use the updated versions above instead.
 **Solution**: Runtime → Change runtime type → GPU type: A100
 
 ### OutOfMemoryError
-**Solution**:
-- For Ultra notebook: Reduce batch_size from 48 to 40
-- For Standard notebook: Reduce batch_size from 24 to 16
+**Solution**: In `Colab_A100_Final.ipynb`, this shouldn't happen (batch size is optimized)
+- If it does: Check GPU type (should be A100)
+- T4 users: Contact us for adjusted config
 
-### Slow Training (<200 img/s)
-**Check**:
-1. Is GPU actually A100? Run `!nvidia-smi`
-2. Is data on Google Drive? (not local)
-3. Are workers set correctly? (num_workers=4)
+### "403 Forbidden" when downloading data
+**Solution**:
+- For **public dataset**: No action needed (notebook uses public dataset)
+- For **competition**: Must join competition and accept rules first
 
 ### "Cannot find images"
 **Solution**:
-1. Check your Google Drive path
-2. Update paths in notebook Step 5
-3. Verify folder names match exactly
+- Re-run Step 5 (Data Reorganization)
+- Check that Step 4 (Download) completed successfully
+
+### Training is slow (<200 img/s)
+**Check**:
+1. Is GPU actually A100? Run Step 0 to verify
+2. Are you using the right notebook? (`Colab_A100_Final.ipynb`)
+3. Is batch size correct? (should be 48 for A100)
+
+---
+
+## 📧 Need Help?
+
+If you encounter issues not covered here:
+
+1. **Check the troubleshooting guide**: `KAGGLE_SETUP_GUIDE.md`
+2. **Review training output** for error messages
+3. **Verify all steps** completed successfully
 
 ---
 
 ## 🎯 Expected Results Timeline
 
-### Ultra-Optimized (1.5 hours total):
+### On A100 GPU (1.5 hours total):
 
 ```
-[epoch 01/30] val f1=0.35  (3 min)
-[epoch 05/30] val f1=0.62  (15 min)
-[epoch 10/30] val f1=0.77  (30 min)
-[epoch 15/30] val f1=0.82  (45 min)
-[epoch 20/30] val f1=0.85  (60 min)
-[epoch 25/30] val f1=0.86  (75 min)
-[epoch 30/30] val f1=0.87  (90 min)
+[epoch 01/30] val_f1=0.35  (3 min)
+[epoch 05/30] val_f1=0.62  (15 min)
+[epoch 10/30] val_f1=0.77  (30 min)
+[epoch 15/30] val_f1=0.82  (45 min)
+[epoch 20/30] val_f1=0.85  (60 min)
+[epoch 25/30] val_f1=0.86  (75 min)
+[epoch 30/30] val_f1=0.87  (90 min)
 
 ✓ Training complete!
 ```
@@ -194,31 +167,4 @@ Final Kaggle Score: 0.87-0.89 🎯
 
 ---
 
-## 📚 Additional Resources
-
-- **Quick Start**: `../START_HERE.md`
-- **Technical Details**: `../RUN_STAGE1.md`
-- **Data Setup**: `../data/README.md`
-
----
-
-## ⚠️ Important Notes
-
-1. **Free Colab Limits**:
-   - A100 usage is limited (~12 hours/week for free tier)
-   - Save your work frequently
-   - Download results immediately after training
-
-2. **Data Transfer**:
-   - Using Google Drive may be slow initially
-   - First epoch might be slower (loading/caching)
-   - Subsequent epochs will be faster
-
-3. **Reproducibility**:
-   - Random seed is set (42)
-   - Results should be consistent
-   - Small variations (<1%) are normal
-
----
-
-**Choose `A100_Ultra_Optimized.ipynb` for best performance! ⚡**
+**Start with `Colab_A100_Final.ipynb` for the best experience! ⚡**
