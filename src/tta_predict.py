@@ -129,8 +129,8 @@ def main(args):
         data_cfg["submission_file_col"]
     )
 
-    # Save submission
-    out_path = out_cfg.get("submission_path", "submission_tta.csv")
+    # Save submission - Always use submission_tta.csv for TTA
+    out_path = "submission_tta.csv"
     df_submission.to_csv(out_path, index=False)
     print(f"[saved] {out_path} ({len(df_submission)} rows)")
     print(f"[preview]\n{df_submission.head()}")
