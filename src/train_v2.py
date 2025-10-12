@@ -25,6 +25,18 @@ def build_model(name: str, num_classes: int):
     elif name == "resnet50":
         m = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
         m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "resnet101":
+        m = models.resnet101(weights=models.ResNet101_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "densenet121":
+        m = models.densenet121(weights=models.DenseNet121_Weights.DEFAULT)
+        m.classifier = nn.Linear(m.classifier.in_features, num_classes)
+    elif name == "densenet169":
+        m = models.densenet169(weights=models.DenseNet169_Weights.DEFAULT)
+        m.classifier = nn.Linear(m.classifier.in_features, num_classes)
+    elif name == "mobilenet_v2":
+        m = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
+        m.classifier[1] = nn.Linear(m.classifier[1].in_features, num_classes)
     elif name == "efficientnet_b0":
         m = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.DEFAULT)
         m.classifier[1] = nn.Linear(m.classifier[1].in_features, num_classes)

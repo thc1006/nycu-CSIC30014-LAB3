@@ -1,0 +1,54 @@
+# MobileNetV2 config - Based on successful ResNet18 baseline
+# Target: 83-85% (lightweight with only 3.4M params - LOWEST overfitting risk!)
+# Research shows MobileNetV2 excellent for small medical datasets
+
+data:
+  # Relative paths (works on both Colab and local)
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+
+  # CSV paths
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 18                    # More epochs for smaller model
+  batch_size: 32                # Can use larger batch (lightweight model)
+  num_workers: 4
+  lr: 0.0003                    # Same as successful ResNet18
+  weight_decay: 0.0001          # Same as ResNet18
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+
+  # Proven strategy from ResNet18
+  use_weighted_sampler: true    # CRITICAL for COVID-19 (1% samples)
+  loss: ce                      # Simple CrossEntropy
+  label_smoothing: 0.05         # Moderate smoothing
+
+  # Conservative augmentation for medical images
+  use_mixup: false              # Disable for stability
+  advanced_aug: true            # Medical-specific augmentation
+
+perf:
+  amp_dtype: bf16               # bfloat16 AMP (A100 optimized)
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: mobilenet_v2            # MobileNetV2 (3.4M params - VERY lightweight)
+  img_size: 224                 # Standard resolution
+
+out:
+  dir: outputs/colab_mobilenetv2
+  submission_path: data/submission_mobilenetv2.csv
