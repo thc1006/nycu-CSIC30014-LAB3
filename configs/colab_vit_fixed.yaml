@@ -1,0 +1,62 @@
+# Fixed ViT config - based on successful ResNet18 baseline
+# Key changes from failed ViT attempt:
+# - Restored lr=0.0003 (was too low at 0.0001)
+# - Enabled weighted_sampler (critical for COVID-19 balance)
+# - Removed conflicting loss functions (focal + label smoothing + mixup)
+# - Reduced mixup to 30% (was too aggressive at 80%)
+# - Increased warmup for ViT stability
+
+data:
+  # Relative paths (works on both Colab and local)
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+
+  # CSV paths
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 20                    # Slightly longer than ResNet18 (was 12)
+  batch_size: 16                # ViT needs smaller batch (A100: 16, T4: 8)
+  num_workers: 4
+  lr: 0.0003                    # FIXED: Restored from 0.0001 (same as ResNet18)
+  weight_decay: 0.05            # Higher for ViT (was 0.01)
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 5              # FIXED: Increased from 2 for ViT stability
+
+  # FIXED: Use SIMPLE, PROVEN loss strategy from ResNet18
+  use_weighted_sampler: true    # CRITICAL: Enabled (was false)
+  loss: ce                      # FIXED: Standard CE (was focal_improved)
+  label_smoothing: 0.05         # FIXED: Moderate smoothing (was 0.1)
+
+  # FIXED: Conservative mixup (medical images need precision)
+  use_mixup: true
+  mixup_alpha: 0.4              # FIXED: Reduced from 1.0
+  mixup_prob: 0.3               # FIXED: Reduced from 0.8 (too aggressive)
+
+  # Medical-specific augmentation (keep this)
+  advanced_aug: true
+
+perf:
+  amp_dtype: bf16               # bfloat16 AMP (A100 optimized)
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: vit_base_patch16_224    # Vision Transformer
+  img_size: 224                 # Standard ViT input size
+
+out:
+  dir: outputs/colab_vit_fixed
+  submission_path: data/submission_vit_fixed.csv
