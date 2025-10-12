@@ -79,8 +79,11 @@ def train_one_epoch(model, loader, optimizer, scaler, device, loss_fn, amp_dtype
     all_preds, all_tgts = [], []
 
     for imgs, targets, _ in loader:
-        imgs = imgs.to(device, non_blocking=True)
-        targets = targets.to(device, non_blocking=True)
+        # For GPU-cached dataset, imgs are already on GPU
+        if not imgs.is_cuda:
+            imgs = imgs.to(device, non_blocking=True)
+        if not targets.is_cuda:
+            targets = targets.to(device, non_blocking=True)
 
         # Apply Mixup/CutMix randomly
         if use_mixup and np.random.rand() < mixup_prob:
@@ -134,8 +137,11 @@ def evaluate(model, loader, device):
     total, correct = 0, 0
     all_preds, all_tgts = [], []
     for imgs, targets, _ in loader:
-        imgs = imgs.to(device, non_blocking=True)
-        targets = targets.to(device, non_blocking=True)
+        # For GPU-cached dataset, imgs are already on GPU
+        if not imgs.is_cuda:
+            imgs = imgs.to(device, non_blocking=True)
+        if not targets.is_cuda:
+            targets = targets.to(device, non_blocking=True)
         logits = model(imgs)
         preds = logits.argmax(1)
         total += targets.size(0)
@@ -170,21 +176,45 @@ def main(args):
     }
     advanced_aug = train_cfg.get('advanced_aug', False)
 
-    print(f"[init] Creating train data loader...")
-    # Data loaders
-    train_ds, train_loader = make_loader(
-        data_cfg["train_csv"], data_cfg["images_dir_train"], data_cfg["file_col"], data_cfg["label_cols"],
-        mdl_cfg["img_size"], train_cfg["batch_size"], train_cfg["num_workers"], augment=True,
-        shuffle=True, weighted=bool(train_cfg.get("use_weighted_sampler", False)),
-        advanced_aug=advanced_aug, aug_config=aug_config
-    )
-    print(f"[init] Train loader created. Creating val data loader...")
-    val_ds, val_loader = make_loader(
-        data_cfg["val_csv"], data_cfg["images_dir_val"], data_cfg["file_col"], data_cfg["label_cols"],
-        mdl_cfg["img_size"], train_cfg["batch_size"], train_cfg["num_workers"], augment=False,
-        shuffle=False, weighted=False
-    )
-    print(f"[init] Val loader created. Building model...")
+    # Check if GPU caching is enabled
+    use_gpu_cache = train_cfg.get("use_gpu_cache", False)
+
+    if use_gpu_cache and device.type == "cuda":
+        print("[init] Using GPU-cached dataset (preload all images to GPU)")
+        from .data_gpu_cached import make_gpu_cached_loader
+
+        print(f"[init] Creating GPU-cached train loader...")
+        train_ds, train_loader = make_gpu_cached_loader(
+            data_cfg["train_csv"], data_cfg["images_dir_train"], data_cfg["file_col"], data_cfg["label_cols"],
+            mdl_cfg["img_size"], train_cfg["batch_size"], num_workers=0, augment=True,
+            shuffle=True, device=device
+        )
+
+        print(f"[init] Creating GPU-cached val loader...")
+        val_ds, val_loader = make_gpu_cached_loader(
+            data_cfg["val_csv"], data_cfg["images_dir_val"], data_cfg["file_col"], data_cfg["label_cols"],
+            mdl_cfg["img_size"], train_cfg["batch_size"], num_workers=0, augment=False,
+            shuffle=False, device=device
+        )
+    else:
+        if use_gpu_cache:
+            print("[WARNING] GPU cache requested but no CUDA available, using standard loader")
+
+        print(f"[init] Creating train data loader...")
+        train_ds, train_loader = make_loader(
+            data_cfg["train_csv"], data_cfg["images_dir_train"], data_cfg["file_col"], data_cfg["label_cols"],
+            mdl_cfg["img_size"], train_cfg["batch_size"], train_cfg["num_workers"], augment=True,
+            shuffle=True, weighted=bool(train_cfg.get("use_weighted_sampler", False)),
+            advanced_aug=advanced_aug, aug_config=aug_config
+        )
+        print(f"[init] Train loader created. Creating val data loader...")
+        val_ds, val_loader = make_loader(
+            data_cfg["val_csv"], data_cfg["images_dir_val"], data_cfg["file_col"], data_cfg["label_cols"],
+            mdl_cfg["img_size"], train_cfg["batch_size"], train_cfg["num_workers"], augment=False,
+            shuffle=False, weighted=False
+        )
+
+    print(f"[init] Data loaders created. Building model...")
 
     model = build_model(mdl_cfg["name"], data_cfg["num_classes"]).to(device)
     print(f"[init] Model built and moved to {device}")

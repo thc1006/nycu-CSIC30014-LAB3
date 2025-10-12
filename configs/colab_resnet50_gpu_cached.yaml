@@ -1,0 +1,49 @@
+# ResNet50 with GPU-cached dataset (FAST!)
+# Preloads all images to GPU for ~5-10% speedup
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 15
+  batch_size: 24
+  num_workers: 0                # MUST be 0 for GPU cached (data already on GPU)
+  lr: 0.0003
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+
+  use_weighted_sampler: true
+  loss: ce
+  label_smoothing: 0.05
+  use_mixup: false
+  advanced_aug: true
+
+  # GPU cache specific
+  use_gpu_cache: true           # Enable GPU caching
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: resnet50
+  img_size: 224
+
+out:
+  dir: outputs/colab_resnet50_gpu_cached
+  submission_path: data/submission_resnet50_gpu_cached.csv
