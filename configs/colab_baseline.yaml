@@ -1,0 +1,47 @@
+# Colab baseline config for 80.122% reproduction
+# Uses relative paths (works on both Colab and local)
+
+data:
+  # Relative paths (project root)
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+
+  # CSV paths
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 12                    # 12 epochs for 80.122% baseline
+  batch_size: 32                # A100 can handle 32, T4 will use 16
+  num_workers: 4
+  lr: 0.0003
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+  use_weighted_sampler: true    # CRITICAL for COVID-19 (1% samples)
+  loss: ce
+  label_smoothing: 0.05         # Prevents overfitting
+
+perf:
+  amp_dtype: bf16               # bfloat16 AMP (A100 optimized)
+  channels_last: true
+  cudnn_benchmark: true         # Enable for Colab
+  tf32: medium
+
+model:
+  name: resnet18                # Simple but effective
+  img_size: 224                 # Optimal resolution
+
+out:
+  dir: outputs/colab_baseline
+  submission_path: data/submission.csv
