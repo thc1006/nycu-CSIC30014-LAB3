@@ -31,14 +31,22 @@ class CSVDataset(Dataset):
 
 def make_loader(csv_path, images_dir, file_col, label_cols, img_size, batch_size, num_workers, augment, shuffle=True, weighted=False, advanced_aug=False, aug_config=None):
     ds = CSVDataset(csv_path, images_dir, file_col, label_cols, img_size, augment, advanced_aug, aug_config)
+
+    # Use pin_memory only if num_workers > 0 and CUDA is available
+    use_pin_memory = (num_workers > 0) and torch.cuda.is_available()
+
     if weighted and shuffle:
+        print(f"[DataLoader] Creating weighted sampler for {len(ds)} samples...")
         labels = ds.df[label_cols].values
         cls = labels.argmax(1)
         counts = np.bincount(cls, minlength=len(label_cols)).astype(float)
         weights = (counts.sum() / np.maximum(counts, 1.0))
         sample_weights = weights[cls]
         sampler = WeightedRandomSampler(weights=torch.from_numpy(sample_weights), num_samples=len(sample_weights), replacement=True)
-        loader = DataLoader(ds, batch_size=batch_size, sampler=sampler, num_workers=num_workers, pin_memory=True)
+        print(f"[DataLoader] Weighted sampler created. Class counts: {counts}")
+        loader = DataLoader(ds, batch_size=batch_size, sampler=sampler, num_workers=num_workers, pin_memory=use_pin_memory)
     else:
-        loader = DataLoader(ds, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=True)
+        loader = DataLoader(ds, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=use_pin_memory)
+
+    print(f"[DataLoader] Created loader: batch_size={batch_size}, num_workers={num_workers}, pin_memory={use_pin_memory}")
     return ds, loader

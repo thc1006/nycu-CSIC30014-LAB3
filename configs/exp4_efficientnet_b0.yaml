@@ -13,7 +13,7 @@ train:
   seed: 789
   epochs: 40
   batch_size: 14
-  num_workers: 4
+  num_workers: 0  # Changed from 4 to fix Windows hanging issue
   lr: 0.00015
   weight_decay: 0.0001
   optimizer: adamw
