@@ -251,6 +251,13 @@ def main(args):
     if use_channels_last:
         model = model.to(memory_format=torch.channels_last)
 
+    # torch.compile for 20-40% speedup on A100
+    use_compile = train_cfg.get("use_compile", False)
+    if use_compile and hasattr(torch, 'compile'):
+        print("[compile] Applying torch.compile for A100 speedup...")
+        model = torch.compile(model, mode=train_cfg.get("compile_mode", "default"))
+        print(f"[compile] Model compiled with mode={train_cfg.get('compile_mode', 'default')}")
+
     # Optimizer
     if train_cfg["optimizer"] == "adamw":
         optimizer = optim.AdamW(model.parameters(), lr=train_cfg["lr"], weight_decay=train_cfg["weight_decay"])
@@ -302,6 +309,12 @@ def main(args):
     best_f1 = -1.0
     os.makedirs(out_cfg["dir"], exist_ok=True)
 
+    # Early stopping
+    patience = train_cfg.get("patience", 10)
+    min_delta = train_cfg.get("min_delta", 0.0001)
+    patience_counter = 0
+    print(f"[early_stop] patience={patience}, min_delta={min_delta}")
+
     for epoch in range(train_cfg["epochs"]):
         acc_tr, f1_tr = train_one_epoch(model, train_loader, optimizer, scaler, device, loss_fn, amp_dtype,
                                         use_mixup, mixup_alpha, mixup_prob)
@@ -316,10 +329,17 @@ def main(args):
 
         print(f"[epoch {epoch+1:02d}] train acc={acc_tr:.4f} f1={f1_tr:.4f} | val acc={acc_val:.4f} f1={f1_val:.4f}")
 
-        if f1_val > best_f1:
+        if f1_val > best_f1 + min_delta:
             best_f1 = f1_val
+            patience_counter = 0
             torch.save({"model": model.state_dict(), "cfg": cfg}, os.path.join(out_cfg["dir"], "best.pt"))
             print(f"  -> saved new best to {os.path.join(out_cfg['dir'], 'best.pt')} (val macro-F1={best_f1:.4f})")
+        else:
+            patience_counter += 1
+            print(f"  -> no improvement ({patience_counter}/{patience})")
+            if patience_counter >= patience:
+                print(f"[early_stop] Stopped at epoch {epoch+1}")
+                break
 
     # Finalize SWA
     if use_swa:

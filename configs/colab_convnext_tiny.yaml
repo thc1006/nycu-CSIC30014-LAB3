@@ -29,19 +29,31 @@ train:
   scheduler: cosine
   warmup_epochs: 2              # Longer warmup for complex model
 
+  # Early stopping
+  patience: 8
+  min_delta: 0.0005
+
   # Advanced training strategy
   use_weighted_sampler: true    # CRITICAL for COVID-19 (1% samples)
   loss: ce                      # CrossEntropy
   label_smoothing: 0.1          # Higher smoothing for regularization
 
-  # GPU cache for 5-10% speedup (A100)
-  use_gpu_cache: true           # Preload all images to GPU VRAM
+  # GPU optimizations
+  use_gpu_cache: true
+  use_compile: true             # torch.compile for 20-40% speedup
+  compile_mode: default
 
-  # Advanced augmentation for 90%+ target
-  use_mixup: true               # Enable Mixup/CutMix
-  mixup_alpha: 0.2              # Mixup/CutMix alpha parameter
-  mixup_prob: 0.5               # Probability of applying mixup/cutmix
-  advanced_aug: true            # Medical-specific augmentation
+  # Aggressive augmentation (medical imaging research 2024)
+  use_mixup: true
+  mixup_alpha: 0.2
+  mixup_prob: 0.5
+  advanced_aug: true
+  aug_rotation: 20              # 20 degrees rotation
+  aug_translate: 0.15           # 15% translation
+  aug_scale_min: 0.75           # 25% scale variation
+  aug_scale_max: 1.25
+  aug_shear: 15
+  random_erasing_prob: 0.3
 
 perf:
   amp_dtype: bf16               # bfloat16 AMP (A100 optimized)

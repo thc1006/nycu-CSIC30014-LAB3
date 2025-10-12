@@ -1,0 +1,57 @@
+# Fast iteration config - Quick test in 5 min
+# Use for rapid hyperparameter tuning
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 5                     # Very fast
+  batch_size: 32                # Larger batch for speed
+  num_workers: 0
+  lr: 0.001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+
+  # Early stopping
+  patience: 8
+  min_delta: 0.0005
+
+  use_weighted_sampler: true
+  loss: ce
+  label_smoothing: 0.1
+
+  use_gpu_cache: true
+  use_compile: true
+  compile_mode: reduce-overhead  # Fastest compile mode
+
+  use_mixup: true
+  mixup_alpha: 0.2
+  mixup_prob: 0.5
+  advanced_aug: true
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: resnet18              # Small model for fast iteration
+  img_size: 224
+
+out:
+  dir: outputs/fast_test
+  submission_path: data/submission_fast_test.csv

@@ -1,0 +1,65 @@
+# EfficientNetV2-S 384px + torch.compile - Optimized for A100
+# Target: 88-90%
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 43
+  epochs: 18
+  batch_size: 16                # EfficientNet can handle larger batch
+  num_workers: 0
+  lr: 0.0002
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+
+  # Early stopping
+  patience: 8
+  min_delta: 0.0005
+
+  use_weighted_sampler: true
+  loss: ce
+  label_smoothing: 0.1
+
+  # GPU optimizations
+  use_gpu_cache: true
+  use_compile: true
+  compile_mode: default
+
+  # Aggressive augmentation
+  use_mixup: true
+  mixup_alpha: 0.2
+  mixup_prob: 0.5
+  advanced_aug: true
+  aug_rotation: 20
+  aug_translate: 0.15
+  aug_scale_min: 0.75
+  aug_scale_max: 1.25
+  aug_shear: 15
+  random_erasing_prob: 0.3
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: efficientnet_v2_s
+  img_size: 384
+
+out:
+  dir: outputs/colab_efficientnetv2_s_384
+  submission_path: data/submission_efficientnetv2_s_384.csv

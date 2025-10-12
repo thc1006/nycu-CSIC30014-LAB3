@@ -1,0 +1,64 @@
+# ConvNeXt-Tiny 384px + Focal Loss for extreme imbalance (COVID-19: 0.98%)
+# Target: Better COVID-19 recall
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 20
+  batch_size: 12
+  num_workers: 0
+  lr: 0.0001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 2
+
+  use_weighted_sampler: true    # Critical for COVID-19
+
+  # Focal Loss for extreme imbalance
+  loss: focal_improved
+  focal_alpha: [0.45, 0.20, 0.45, 2.88]  # COVID-19 gets 48x weight
+  focal_gamma: 2.5              # Higher gamma for hard examples
+  label_smoothing: 0.05         # Lower smoothing with focal
+
+  use_gpu_cache: true
+  use_compile: true
+  compile_mode: default
+
+  # Aggressive augmentation
+  use_mixup: true
+  mixup_alpha: 0.3              # Higher for rare class
+  mixup_prob: 0.6
+  advanced_aug: true
+  aug_rotation: 20
+  aug_translate: 0.15
+  aug_scale_min: 0.75
+  aug_scale_max: 1.25
+  aug_shear: 15
+  random_erasing_prob: 0.25     # Lower to preserve features
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: convnext_tiny
+  img_size: 384
+
+out:
+  dir: outputs/colab_convnext_tiny_384_focal
+  submission_path: data/submission_convnext_tiny_384_focal.csv
