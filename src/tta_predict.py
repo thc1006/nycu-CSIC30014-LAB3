@@ -117,7 +117,14 @@ def main(args):
     ckpt_path = args.ckpt if args.ckpt else os.path.join(out_cfg["dir"], "best.pt")
     print(f"[loading] {ckpt_path}")
     state = torch.load(ckpt_path, map_location=device)
-    model.load_state_dict(state["model"])
+
+    # Handle torch.compile checkpoints (strip _orig_mod. prefix)
+    state_dict = state["model"]
+    if any(k.startswith("_orig_mod.") for k in state_dict.keys()):
+        print("[compile] Detected torch.compile checkpoint, stripping _orig_mod. prefix...")
+        state_dict = {k.replace("_orig_mod.", ""): v for k, v in state_dict.items()}
+
+    model.load_state_dict(state_dict)
 
     print("[TTA] Generating predictions with Test-Time Augmentation...")
     print("[TTA] Applying 6 augmentations: original, hflip, vflip, rot90, rot180, rot270")
