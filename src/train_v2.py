@@ -52,6 +52,36 @@ def build_model(name: str, num_classes: int):
     elif name == "convnext_base":
         m = models.convnext_base(weights=models.ConvNeXt_Base_Weights.DEFAULT)
         m.classifier[2] = nn.Linear(m.classifier[2].in_features, num_classes)
+    elif name == "regnet_x_400mf":
+        m = models.regnet_x_400mf(weights=models.RegNet_X_400MF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_x_800mf":
+        m = models.regnet_x_800mf(weights=models.RegNet_X_800MF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_x_1_6gf":
+        m = models.regnet_x_1_6gf(weights=models.RegNet_X_1_6GF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_x_3_2gf":
+        m = models.regnet_x_3_2gf(weights=models.RegNet_X_3_2GF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_x_8gf":
+        m = models.regnet_x_8gf(weights=models.RegNet_X_8GF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_y_400mf":
+        m = models.regnet_y_400mf(weights=models.RegNet_Y_400MF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_y_800mf":
+        m = models.regnet_y_800mf(weights=models.RegNet_Y_800MF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_y_1_6gf":
+        m = models.regnet_y_1_6gf(weights=models.RegNet_Y_1_6GF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_y_3_2gf":
+        m = models.regnet_y_3_2gf(weights=models.RegNet_Y_3_2GF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name == "regnet_y_8gf":
+        m = models.regnet_y_8gf(weights=models.RegNet_Y_8GF_Weights.DEFAULT)
+        m.fc = nn.Linear(m.fc.in_features, num_classes)
     elif name.startswith('vit_') or name.startswith('swin_') or name.startswith('deit_'):
         # Vision Transformer and Swin Transformer support via timm
         try:

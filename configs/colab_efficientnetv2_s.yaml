@@ -1,0 +1,55 @@
+# EfficientNetV2-S config - Fast training with progressive learning
+# Target: 86-88% (21.5M params, optimized efficiency)
+
+data:
+  # Relative paths (works on both Colab and local)
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+
+  # CSV paths
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 43                      # Different seed for diversity
+  epochs: 16                    # Faster convergence
+  batch_size: 24                # Can handle larger batch
+  num_workers: 4
+  lr: 0.0003                    # Higher LR for EfficientNet
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+
+  # Advanced training strategy
+  use_weighted_sampler: true    # CRITICAL for COVID-19 (1% samples)
+  loss: ce                      # CrossEntropy
+  label_smoothing: 0.1          # Higher smoothing
+
+  # Advanced augmentation for 90%+ target
+  use_mixup: true               # Enable Mixup/CutMix
+  mixup_alpha: 0.2              # Mixup/CutMix alpha parameter
+  mixup_prob: 0.5               # Probability of applying mixup/cutmix
+  advanced_aug: true            # Medical-specific augmentation
+
+perf:
+  amp_dtype: bf16               # bfloat16 AMP (A100 optimized)
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: efficientnet_v2_s       # EfficientNetV2-S (21.5M params)
+  img_size: 224                 # Standard resolution
+
+out:
+  dir: outputs/colab_efficientnetv2_s
+  submission_path: data/submission_efficientnetv2_s.csv
