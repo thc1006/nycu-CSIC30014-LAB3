@@ -17,17 +17,20 @@ def build_transforms(img_size=224, augment=True, advanced_aug=False, aug_config=
 
     if augment:
         if advanced_aug:
-            # Advanced augmentation for Stage 1 optimization
-            rotation = aug_config.get('aug_rotation', 15)
-            translate = aug_config.get('aug_translate', 0.1)
-            scale_min = aug_config.get('aug_scale_min', 0.9)
-            scale_max = aug_config.get('aug_scale_max', 1.1)
-            shear = aug_config.get('aug_shear', 10)
-            erase_prob = aug_config.get('random_erasing_prob', 0.3)
+            # Advanced augmentation for MEDICAL IMAGES (chest X-rays)
+            # Optimized for 90%+ accuracy target
+            rotation = aug_config.get('aug_rotation', 10)  # Reduced for medical images
+            translate = aug_config.get('aug_translate', 0.08)
+            scale_min = aug_config.get('aug_scale_min', 0.92)
+            scale_max = aug_config.get('aug_scale_max', 1.08)
+            shear = aug_config.get('aug_shear', 5)  # Reduced shear
+            erase_prob = aug_config.get('random_erasing_prob', 0.25)
 
             return T.Compose([
                 T.Resize((img_size, img_size)),
-                T.RandomHorizontalFlip(p=0.5),
+
+                # Geometric augmentations (conservative for medical)
+                T.RandomHorizontalFlip(p=0.5),  # X-rays can be flipped
                 T.RandomRotation(degrees=rotation),
                 T.RandomAffine(
                     degrees=0,
@@ -35,14 +38,25 @@ def build_transforms(img_size=224, augment=True, advanced_aug=False, aug_config=
                     scale=(scale_min, scale_max),
                     shear=shear
                 ),
+
+                # MEDICAL-SPECIFIC: Contrast/brightness (simulate different X-ray exposures)
+                T.RandomAutocontrast(p=0.3),  # Auto-adjust contrast
+                T.RandomAdjustSharpness(sharpness_factor=2.0, p=0.3),  # Sharpness variation
+
+                # Standard color jitter (more conservative for medical)
                 T.ColorJitter(
-                    brightness=0.2,
-                    contrast=0.2,
-                    saturation=0.1,
-                    hue=0.05
+                    brightness=0.15,  # Reduced from 0.2
+                    contrast=0.25,    # Increased - important for X-rays
+                    saturation=0.05,  # Reduced - X-rays mostly grayscale
+                    hue=0.02          # Reduced - minimal hue variation
                 ),
+
                 T.ToTensor(),
-                T.RandomErasing(p=erase_prob, scale=(0.02, 0.15)),
+
+                # Random erasing (simulate artifacts)
+                T.RandomErasing(p=erase_prob, scale=(0.02, 0.12)),
+
+                # Normalization (ImageNet stats work well for pretrained models)
                 T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             ])
         else:

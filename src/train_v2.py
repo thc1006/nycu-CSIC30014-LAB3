@@ -40,6 +40,13 @@ def build_model(name: str, num_classes: int):
     elif name == "convnext_base":
         m = models.convnext_base(weights=models.ConvNeXt_Base_Weights.DEFAULT)
         m.classifier[2] = nn.Linear(m.classifier[2].in_features, num_classes)
+    elif name.startswith('vit_') or name.startswith('swin_') or name.startswith('deit_'):
+        # Vision Transformer and Swin Transformer support via timm
+        try:
+            import timm
+        except ImportError:
+            raise ImportError("timm is required for ViT/Swin models. Install with: pip install timm")
+        m = timm.create_model(name, pretrained=True, num_classes=num_classes)
     else:
         raise ValueError(f"Unknown model name: {name}")
     return m

@@ -1,0 +1,60 @@
+# Colab ViT config targeting 90%+ score
+# Key improvements: ViT transformer + Focal Loss + Medical Augmentation + 256px
+
+data:
+  # Relative paths (works on both Colab and local)
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+
+  # CSV paths
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 25                    # Increased from 12 for better convergence
+  batch_size: 16                # Reduced for larger ViT model (A100: 16, T4: 8)
+  num_workers: 4
+  lr: 0.0001                    # Lower LR for ViT fine-tuning
+  weight_decay: 0.01            # Increased for better regularization
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 2              # Increased warmup for stability
+
+  # Critical: Improved Focal Loss for extreme class imbalance
+  loss: focal_improved          # Use improved focal loss with label smoothing
+  focal_gamma: 3.0              # High gamma for extreme imbalance (COVID-19: 0.98%)
+  focal_alpha: [1.0, 0.57, 1.05, 27.2]  # Class weights [Normal, Bacteria, Virus, COVID-19]
+  label_smoothing: 0.1          # Increased from 0.05
+
+  # Advanced augmentation for medical images
+  use_weighted_sampler: false   # Disabled - using Focal Loss instead
+  use_mixup: true               # Enable mixup augmentation
+  mixup_alpha: 1.0
+  mixup_prob: 0.8
+
+  # Medical-specific augmentation
+  advanced_aug: true            # Enable medical augmentation in aug.py
+
+perf:
+  amp_dtype: bf16               # bfloat16 AMP (A100 optimized)
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: vit_base_patch16_224    # Vision Transformer (best for medical imaging)
+  # Alternative: swin_base_patch4_window7_224 (also excellent)
+  img_size: 256                 # Increased from 224 for better detail
+
+out:
+  dir: outputs/colab_vit_90
+  submission_path: data/submission_vit.csv
