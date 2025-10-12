@@ -1,5 +1,5 @@
 # Colab ViT config targeting 90%+ score
-# Key improvements: ViT transformer + Focal Loss + Medical Augmentation + 256px
+# Key improvements: ViT transformer + Focal Loss + Medical Augmentation + 224px
 
 data:
   # Relative paths (works on both Colab and local)
@@ -53,7 +53,7 @@ perf:
 model:
   name: vit_base_patch16_224    # Vision Transformer (best for medical imaging)
   # Alternative: swin_base_patch4_window7_224 (also excellent)
-  img_size: 256                 # Increased from 224 for better detail
+  img_size: 224                 # Match ViT input size (224x224)
 
 out:
   dir: outputs/colab_vit_90
