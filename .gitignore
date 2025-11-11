@@ -57,7 +57,6 @@ lab3_colab.ipynb
 
 # Claude AI instructions (local only)
 .claude/
-CLAUDE.md
 
 # Temporary files
 *.log

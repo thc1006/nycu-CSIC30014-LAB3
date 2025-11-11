@@ -1,0 +1,55 @@
+# Fast EfficientNet-V2-S - 30 epochs快速訓練
+model:
+  name: efficientnet_v2_s
+  img_size: 384
+  dropout: 0.20
+
+data:
+  train_csv: data/train_data.csv
+  train_images_dir: train_images
+  val_split: 0.15
+  num_classes: 4
+  num_workers: 8
+  pin_memory: true
+
+train:
+  seed: 777
+  epochs: 30
+  batch_size: 28
+  lr: 0.0001
+  weight_decay: 0.0002
+
+  # Conservative loss
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.0, 10.0]
+  focal_gamma: 2.0
+  label_smoothing: 0.10
+
+  # Strong augmentation
+  use_mixup: true
+  mixup_prob: 0.5
+  mixup_alpha: 1.0
+  use_cutmix: true
+  cutmix_prob: 0.4
+  cutmix_alpha: 1.0
+
+  # Regularization
+  use_swa: true
+  swa_start_epoch: 25
+  swa_lr: 0.00005
+  use_ema: true
+  ema_decay: 0.9999
+
+  # Training control
+  early_stopping_patience: 12
+  early_stopping_min_delta: 0.001
+
+scheduler:
+  type: cosine
+  warmup_epochs: 2
+  min_lr: 0.000001
+
+out:
+  dir: outputs/fast_efficientnet_run
+  checkpoint_path: outputs/fast_efficientnet_run/best.pt
+  submission_path: data/submission_fast_efficientnet.csv

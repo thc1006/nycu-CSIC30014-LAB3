@@ -54,8 +54,13 @@ for label in class_names:
     print(f"    {label:12s}: {count:4d} ({count/len(pseudo_df)*100:.1f}%)")
 
 # Load original training data
-train_df = pd.read_csv('train_data_with_kfold.csv')
+train_df = pd.read_csv('data/train_data.csv')
 print(f"\n  Original train size: {len(train_df)}")
+
+# Add fold column to train_df if it doesn't exist
+if 'fold' not in train_df.columns:
+    # Simple random split into 5 folds
+    train_df['fold'] = np.random.randint(0, 5, size=len(train_df))
 
 # Combine with pseudo-labels
 # Keep fold assignments for original data, -1 for pseudo
