@@ -1,0 +1,46 @@
+model:
+  name: convnext_small
+  img_size: 416
+  dropout: 0.35
+
+data:
+  images_dir_train: .
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data_ultra_augmented_fixed.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+train:
+  seed: 2002
+  epochs: 45
+  batch_size: 30
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0005
+  optimizer: adamw
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.6, 16.0]
+  focal_gamma: 3.0
+  label_smoothing: 0.12
+  use_mixup: true
+  mixup_prob: 0.6
+  use_cutmix: true
+  cutmix_prob: 0.5
+  use_swa: false
+  use_ema: true
+  ema_decay: 0.9999
+  early_stopping_patience: 12
+  scheduler: cosine
+  warmup_epochs: 5
+  augment: true
+  advanced_aug: true
+  use_weighted_sampler: true
+
+out:
+  dir: outputs/ultra_model2
+  checkpoint_path: outputs/ultra_model2/best.pt
+  submission_path: data/submission_ultra2.csv

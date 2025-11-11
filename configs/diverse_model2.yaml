@@ -1,0 +1,46 @@
+model:
+  name: regnet_y_3_2gf
+  img_size: 384
+  dropout: 0.40
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+train:
+  seed: 4004
+  epochs: 35
+  batch_size: 32
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0002
+  optimizer: adamw
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 2.0, 20.0]
+  focal_gamma: 3.5
+  label_smoothing: 0.15
+  use_mixup: true
+  mixup_prob: 0.4
+  use_cutmix: true
+  cutmix_prob: 0.3
+  use_swa: false
+  use_ema: true
+  ema_decay: 0.9998
+  early_stopping_patience: 10
+  scheduler: cosine
+  warmup_epochs: 4
+  augment: true
+  advanced_aug: true
+  use_weighted_sampler: true
+
+out:
+  dir: outputs/diverse_model2
+  checkpoint_path: outputs/diverse_model2/best.pt
+  submission_path: data/submission_diverse2.csv

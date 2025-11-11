@@ -24,6 +24,9 @@ data/*.jpeg
 data/*.jpg
 data/*.png
 
+# Grid search submissions (100+ CSV files)
+data/grid_search_submissions/
+
 # BUT include these small metadata CSVs
 !data/train_data.csv
 !data/val_data.csv
@@ -34,6 +37,13 @@ data/*.png
 train_images/
 val_images/
 test_images/
+
+# Preprocessed image directories (CLAHE, etc.)
+train_images_clahe/
+val_images_clahe/
+test_images_clahe/
+*_preprocessed/
+*_augmented/
 
 # Training outputs
 runs/
@@ -63,6 +73,9 @@ lab3_colab.ipynb
 *.tmp
 training_log.txt
 confusion_matrix.png
+nohup.out
+
+# Dependency version files (pip output artifacts)
 =1.24.0
 =2.0.0
 =6.0.1
@@ -74,4 +87,12 @@ confusion_matrix.png
 =1.3.0
 =0.13.0
 =2.2.0
+
+# Old lab files
 NYCU_LAB1_Ensemble_QuickFix_95.ipynb
+
+# Experimental/temporary scripts (uncomment to ignore)
+# *_experimental.py
+# *_test.py
+# *_backup.py
+# *_old.py

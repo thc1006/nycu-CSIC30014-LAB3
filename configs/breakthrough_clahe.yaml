@@ -1,0 +1,81 @@
+# Breakthrough Config - CLAHE + Brightness Aug
+# Solves train-test distribution mismatch discovered in visual analysis
+# Expected: 86-87%+ (vs current 83.90%)
+
+model:
+  name: efficientnet_v2_s
+  img_size: 384
+  dropout: 0.25  # Increased for better generalization
+
+data:
+  # Use CLAHE-preprocessed images (normalized contrast)
+  images_dir_train: train_images_clahe
+  images_dir_val: val_images_clahe
+  images_dir_test: test_images_clahe
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 40
+  batch_size: 32
+  num_workers: 8
+  lr: 0.0001
+  weight_decay: 0.0003
+  optimizer: adamw
+
+  # Improved focal loss for class imbalance
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.5, 12.0]  # Strong COVID-19 weighting
+  focal_gamma: 2.5  # Focus on hard examples
+  label_smoothing: 0.10
+
+  # Strong augmentation to prevent overfitting
+  use_mixup: true
+  mixup_prob: 0.5
+  mixup_alpha: 1.0
+  use_cutmix: true
+  cutmix_prob: 0.4
+  cutmix_alpha: 1.0
+
+  # CRITICAL: Strong brightness augmentation
+  # Solves COVID-19 brightness bias (train=130, test=123.5)
+  brightness_range: 0.3  # ±30% brightness variation
+  contrast_range: 0.2    # Additional contrast aug on top of CLAHE
+
+  # Model averaging for stability
+  use_swa: true
+  swa_start_epoch: 32
+  swa_lr: 0.00005
+  use_ema: true
+  ema_decay: 0.9999
+
+  # Early stopping
+  early_stopping_patience: 10
+  early_stopping_min_delta: 0.001
+
+  # Cosine annealing with warmup
+  scheduler: cosine
+  warmup_epochs: 3
+
+  # Strong augmentation enabled
+  augment: true
+  advanced_aug: true
+
+  # Weighted sampler for class balance
+  use_weighted_sampler: true
+
+out:
+  dir: outputs/breakthrough_clahe
+  checkpoint_path: outputs/breakthrough_clahe/best.pt
+  submission_path: data/submission_breakthrough_clahe.csv
+
+# Expected improvements from this config:
+# 1. CLAHE: +2-3% (normalized contrast)
+# 2. Brightness aug: +1-2% (fixes COVID-19 bias)
+# 3. Stronger regularization: +0.5-1% (better generalization)
+# Total expected: 86-87%+ (from 83.90%)

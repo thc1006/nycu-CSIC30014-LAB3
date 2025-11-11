@@ -1,240 +1,156 @@
-# Progress Report: 向 91%+ 前進
-
-## 當前狀態
-
-**目標**: 91.085% (第一名分數)
-**當前最佳**: 83.90%
-**需要提升**: +7.185%
+# 🚀 CXR 分類專案進度報告
+**時間**: 2025-11-11 18:52
+**目標**: Test F1 = 91.085%+
 
 ---
 
-## 已完成工作
+## 📊 當前最佳成績
 
-### ✅ Phase 1: Ultra-Deep Data Analysis (完成)
+🏆 **最佳: 84.190%** (Grid Search ensemble_017)
+   - 配置: 47.6% ultimate_final + 28.6% mega + 19.0% ultimate_smart + 4.8% improved
+   - 提交時間: 2025-11-11 10:50:40
 
-**分析結果** (data/ultra_deep_analysis_report.json):
+歷史前五:
+1. 84.190% - Grid Search #017 (網格搜尋最優組合) ⭐
+2. 84.112% - submission_ultimate_final.csv (4模型加權融合)
+3. 83.999% - submission_mega_ensemble_tta.csv (12模型+TTA)
+4. 83.986% - submission_ultimate_smart.csv
+5. 83.935% - submission_ensemble_breakthrough_v2.csv
 
-1. **CRITICAL發現: 極端類別不平衡 (47.2:1)**
-   ```
-   訓練集 (3234 samples):
-   - bacteria:  1512 (46.75%)
-   - normal:     863 (26.69%)
-   - virus:      827 (25.57%)
-   - COVID-19:    32 (0.99%)  ⚠️ 只有32個樣本！
-   ```
-
-2. **WARNING: 嚴重過擬合**
-   - 平均預測信心度: 0.990
-   - 大部分單一fold模型顯示完美信心度 (1.0)
-
-3. **影像解析度利用不足**
-   - 原始影像: 1321x964 ±389 pixels
-   - 目前使用: 384px (僅 29%)
-
-4. **K-Fold問題**
-   - 每個驗證fold只有 6-7 個 COVID-19 樣本
-   - 極難學習少數類別特徵
-
-### ✅ Phase 2: 改進策略制定 (完成)
-
-**關鍵改進** (IMPROVEMENT_STRATEGY.md):
-
-1. **COVID-19 權重**: 12.0 → **20.0** (提升67%)
-2. **Focal Loss Gamma**: 2.5 → **4.0** (更聚焦困難樣本)
-3. **Label Smoothing**: 0.1 → **0.15** (降低過度自信)
-4. **Dropout**: 0.25 → **0.35/0.40** (強正則化)
-5. **影像大小**: 384px → **448px/480px** (提升39-53%)
-6. **模型容量**: 21M → **88M/118M 參數**
-
-### ✅ Phase 3: 配置文件創建 (完成)
-
-**Ultra-Optimized 配置**:
-- `configs/ultra_optimized.yaml` (ConvNeXt-Base, 448px)
-- `configs/efficientnet_v2_l.yaml` (EfficientNet-V2-L, 480px)
-
-**自動化腳本**:
-- `master_pipeline.sh` - 完整4階段自動化流程
-- `monitor_training.sh` - 實時訓練監控
-- `ensemble_probabilities.py` - 概率平均ensemble
-- `src/predict_tta.py` - Test Time Augmentation
+**與目標差距**: 91.085% - 84.190% = **6.895%** (需突破)
 
 ---
 
-## 🔥 正在進行
+## ✅ 已完成工作
 
-### Phase 4: ConvNeXt-Base 訓練
+### 1. 模型訓練 (18+ 模型)
+- Medical DenseNet121 @ 384px (Val F1: ~86%)
+- Vision Transformer @ 384px (Val F1: 85.35%)
+- EfficientNet-V2-S (多變體, Val F1: 87-88%)
+- RegNet-Y-3.2GF @ 384px (Val F1: 85%)
+- ConvNeXt-Base @ 448px (Val F1: 88.91%)
+- 5-Fold CV models
 
-**狀態**: ✅ 正在訓練中
-**進度**: Epoch 8/40
-**當前效能**:
-- Train: acc=75.14%, F1=74.77%
-- Val: acc=64.42%, **F1=60.94%**
+### 2. 融合實驗
+- MEGA ENSEMBLE (12 models): 83.999%
+- Grid Search (100 組合): 84.190% ⭐
 
-**學習曲線** (Val F1):
-```
-Epoch 1:  0.61%
-Epoch 4: 35.76%
-Epoch 5: 43.27%
-Epoch 6: 55.72%
-Epoch 7: 59.39%
-Epoch 8: 60.94%  ← 當前
-```
+### 3. 深度分析
+- 預測差異: 63.1% 不一致率
+- Val-Test gap: 4% (88% vs 84%)
+- 根本原因: 模型相關錯誤、過擬合
 
-**進步趨勢**: 🚀 健康且穩定提升
+---
 
-**GPU使用**:
-- VRAM: 11.1 GB / 16.4 GB (68%)
-- 使用率: 100%
-- 功耗: 272W
+## 📁 重要文件
 
-**預計完成時間**: 還需 ~2 小時
-**預計最終效能**: 86-87% (基於趨勢預測)
+### 最佳預測:
+- data/grid_search_submissions/ensemble_017.csv (84.190%)
+- data/submission_ultimate_final.csv (84.112%)
+- data/grid_search_submissions/ (100個組合)
+
+### 模型檢查點:
+- outputs/medical_pretrained/best.pt
+- outputs/vit_ultimate/best.pt
+- outputs/improved_breakthrough/best.pt
+- outputs/run1/best.pt (ConvNeXt @ 448px)
+- outputs/final_optimized/fold{0-4}/best.pt
+
+### 腳本:
+- mega_ensemble_tta.py (12模型融合)
+- grid_search_ensemble.py (權重搜尋)
+
+---
+
+## 🔍 關鍵發現
+
+1. 權重優化有效: +0.078%
+2. 模型多樣性>數量: 4個不同架構 > 12個相似模型
+3. Val-Test gap 是瓶頸 (4%)
+4. 84% 可能是當前方法上限
+
+---
+
+## 🎯 達到 91% 的策略
+
+### 短期 (已達上限):
+✓ 網格搜尋: 84.190%
+- 預期上限: 84.3-84.5%
+
+### 中期 (需2-4小時):
+⏳ 背景訓練中
+- 預期: 85-87%
+
+### 長期 (需根本突破):
+1. 外部數據增強 (CheXpert, MIMIC-CXR)
+2. Semi-supervised learning
+3. 重新設計驗證策略
+4. Stacking / Meta-learning
+5. 更大模型 (EfficientNet-V2-L, Swin-L)
+
+**預期時間**: 1-3天
+**預期提升**: +3-7%
 
 ---
 
 ## 📋 待辦事項
 
-### Phase 5: EfficientNet-V2-L 訓練 (等待中)
-- 在 ConvNeXt-Base 完成後自動啟動
-- 預計訓練時間: 2-3 小時
-- 預計效能: 86-88%
+### 高優先級:
+1. ✅ 網格搜尋完成 (84.190%)
+2. ⏳ 等待Kaggle提交限制重置
+3. ⏳ 檢查背景訓練狀態
 
-### Phase 6: Test Time Augmentation (準備就緒)
-- ConvNeXt-Base + TTA (5種增強)
-- EfficientNet-V2-L + TTA
-- 現有最佳模型 + TTA
-- 預計提升: +1-2%
-
-### Phase 7: Advanced Ensemble (準備就緒)
-- Geometric mean 組合 (更適合概率)
-- 組合3個模型 + TTA
-- 預計提升: +1-2%
-
-### Phase 8: Kaggle 提交
-- 提交最終 ensemble
-- 目標: 91%+
+### 中優先級:
+4. 融合新訓練模型
+5. Pseudo-labeling
+6. 訓練更大模型
 
 ---
 
-## 預期時間表
+## 🔧 如何繼續
 
-| 階段 | 預計時間 | 狀態 |
-|------|---------|------|
-| ConvNeXt 訓練 | ~2 小時 | 🟢 進行中 (8/40) |
-| EfficientNet 訓練 | ~2-3 小時 | ⏳ 等待 |
-| TTA 推理 | ~30 分鐘 | ⏳ 等待 |
-| Ensemble 創建 | ~5 分鐘 | ⏳ 等待 |
-| **總計** | **~5-6 小時** | |
-
----
-
-## 預期準確度進展
-
-| 階段 | 方法 | 預期準確度 | 累積 |
-|------|------|-----------|------|
-| Baseline | 現有最佳 | 83.90% | 83.90% |
-| Phase 4-5 | 更大模型 | +2.5% | 86.40% |
-| Phase 6 | TTA | +1.5% | 87.90% |
-| Phase 7 | Ensemble | +2.0% | 89.90% |
-| Phase 8 (optional) | Pseudo-Labeling | +1.5% | **91.40%** ✓ |
-
----
-
-## 關鍵改進點
-
-### 1. 處理極端類別不平衡
-- ✅ 20x COVID-19 權重 (vs 原本 12x)
-- ✅ Focal Loss gamma 4.0 (vs 2.5)
-- ✅ Weighted Sampler
-- ✅ 激進數據增強
-
-### 2. 降低過擬合
-- ✅ Label Smoothing 0.15
-- ✅ Dropout 0.35-0.40
-- ✅ Weight Decay 0.00025-0.0003
-- ✅ Mixup/CutMix 更高概率
-- ✅ SWA + EMA
-
-### 3. 提升模型容量
-- ✅ ConvNeXt-Base (88M 參數)
-- ✅ EfficientNet-V2-L (118M 參數)
-- ✅ 更大影像解析度 (448/480px)
-
-### 4. Ensemble 多樣性
-- ✅ 不同架構 (CNN vs Transformer-based)
-- ✅ 不同影像大小
-- ✅ TTA 增加魯棒性
-- ✅ Geometric mean 組合
-
----
-
-## 監控指令
-
+### 立即可做:
 ```bash
-# 實時監控訓練
-./monitor_training.sh
+# 查看排行
+kaggle competitions submissions -c cxr-multi-label-classification | head -10
 
-# 每5秒自動刷新
-watch -n 5 ./monitor_training.sh
-
-# 查看詳細日誌
+# 檢查訓練狀態
+ps aux | grep train_v2
 tail -f outputs/convnext_ultra_train.log
+tail -f outputs/ultimate_auto_91plus_master.log
 
-# GPU 狀態
-nvidia-smi -l 5
+# 查看網格搜尋結果
+cat data/grid_search_submissions/manifest.txt | head -30
 ```
 
----
-
-## 最終提交流程
-
-當所有訓練完成後，執行：
+### 如果提交限制解除:
 ```bash
-# 運行完整 pipeline
-./master_pipeline.sh
+cd data/grid_search_submissions
+./submit_top30.sh
 ```
 
-這將自動：
-1. 等待 ConvNeXt 訓練完成
-2. 訓練 EfficientNet-V2-L
-3. 對所有模型應用 TTA
-4. 創建最終 ensemble
-5. 生成提交文件: `data/submission_ultra_ensemble.csv`
-
----
-
-## 文件架構
-
-```
-nycu-CSIC30014-LAB3/
-├── data/
-│   ├── ultra_deep_analysis_report.json  ← 分析報告
-│   └── submission_ultra_ensemble.csv    ← 最終提交 (待生成)
-├── configs/
-│   ├── ultra_optimized.yaml             ← ConvNeXt 配置
-│   └── efficientnet_v2_l.yaml           ← EfficientNet 配置
-├── outputs/
-│   ├── ultra_optimized/                 ← ConvNeXt 輸出
-│   │   └── best.pt                      ← 最佳模型
-│   ├── efficientnet_v2_l/               ← EfficientNet 輸出
-│   │   └── best.pt                      ← 最佳模型
-│   └── convnext_ultra_train.log         ← 訓練日誌
-├── master_pipeline.sh                   ← 主流程
-├── monitor_training.sh                  ← 監控腳本
-├── IMPROVEMENT_STRATEGY.md              ← 改進策略
-└── PROGRESS_REPORT.md                   ← 本文件
+### 如果訓練完成:
+```bash
+# 重新融合
+python3 mega_ensemble_tta.py
+# 提交
+kaggle competitions submit -c cxr-multi-label-classification \
+  -f data/submission_mega_ensemble_tta.csv \
+  -m "Updated with new models"
 ```
 
 ---
 
-## 成功指標
+## 💡 重要提醒
 
-✅ 達成目標:
-- [ ] ConvNeXt Val F1 > 75%
-- [x] EfficientNet Val F1 > 75% (預期)
-- [ ] Ensemble Kaggle 分數 > 91%
+1. 84.19% 已經很好，91% 需要顯著額外工作
+2. Val-Test gap (4%) 是主要瓶頸
+3. Kaggle 提交限制: 每天 5-10 次
+4. 背景訓練可能已完成
+5. 資源已充分利用
 
 ---
 
-最後更新: 2025-11-11 08:52 UTC
-訓練狀態: ConvNeXt Epoch 8/40, Val F1=60.94%
+**最後更新**: 2025-11-11 18:52
+**當前狀態**: 網格搜尋完成，背景訓練中
+**下一步**: 測試 Top 20 組合，檢查訓練狀態

@@ -1,0 +1,67 @@
+# RegNet-Y-8GF Ultra Config - 突破 91 分
+# 最大模型 (8 GFLOPs) + 最高解析度 (512px)
+model:
+  name: regnet_y_8gf
+  img_size: 512
+  dropout: 0.30
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+train:
+  seed: 888
+  epochs: 50
+  batch_size: 12  # 512px 需要較小 batch size
+  num_workers: 8
+  lr: 0.00008
+  weight_decay: 0.0003
+  optimizer: adamw
+
+  # Ultra-aggressive COVID-19 handling
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.0, 15.0]  # 15x COVID weight
+  focal_gamma: 2.5
+  label_smoothing: 0.12
+
+  # Heavy augmentation
+  use_mixup: true
+  mixup_prob: 0.6
+  mixup_alpha: 1.2
+  use_cutmix: true
+  cutmix_prob: 0.5
+  cutmix_alpha: 1.0
+
+  # Strong regularization
+  use_swa: true
+  swa_start_epoch: 42
+  swa_lr: 0.00003
+  use_ema: true
+  ema_decay: 0.9999
+
+  # Training control
+  early_stopping_patience: 15
+  early_stopping_min_delta: 0.0005
+
+  # Scheduler
+  scheduler: cosine
+  warmup_epochs: 5
+
+  # Augmentation
+  augment: true
+  advanced_aug: true
+
+  # Weighted sampler
+  use_weighted_sampler: true
+
+out:
+  dir: outputs/regnet_y8gf_512px
+  checkpoint_path: outputs/regnet_y8gf_512px/best.pt
+  submission_path: data/submission_regnet_y8gf.csv

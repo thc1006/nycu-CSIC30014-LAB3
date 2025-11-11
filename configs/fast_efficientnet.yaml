@@ -5,19 +5,24 @@ model:
   dropout: 0.20
 
 data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
   train_csv: data/train_data.csv
-  train_images_dir: train_images
-  val_split: 0.15
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
   num_classes: 4
-  num_workers: 8
-  pin_memory: true
 
 train:
   seed: 777
-  epochs: 30
+  epochs: 45
   batch_size: 28
+  num_workers: 8
   lr: 0.0001
   weight_decay: 0.0002
+  optimizer: adamw
 
   # Conservative loss
   loss: improved_focal
@@ -35,7 +40,7 @@ train:
 
   # Regularization
   use_swa: true
-  swa_start_epoch: 25
+  swa_start_epoch: 38
   swa_lr: 0.00005
   use_ema: true
   ema_decay: 0.9999
@@ -44,12 +49,18 @@ train:
   early_stopping_patience: 12
   early_stopping_min_delta: 0.001
 
-scheduler:
-  type: cosine
+  # Scheduler settings
+  scheduler: cosine
   warmup_epochs: 2
-  min_lr: 0.000001
+
+  # Augmentation
+  augment: true
+  advanced_aug: true
+
+  # Weighted sampler for class imbalance
+  use_weighted_sampler: true
 
 out:
-  dir: outputs/fast_efficientnet_run
-  checkpoint_path: outputs/fast_efficientnet_run/best.pt
-  submission_path: data/submission_fast_efficientnet.csv
+  dir: outputs/fast_efficientnet_45ep
+  checkpoint_path: outputs/fast_efficientnet_45ep/best.pt
+  submission_path: data/submission_fast_efficientnet_45ep.csv

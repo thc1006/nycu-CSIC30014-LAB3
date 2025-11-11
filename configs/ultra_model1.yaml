@@ -1,0 +1,46 @@
+model:
+  name: efficientnet_v2_s
+  img_size: 384
+  dropout: 0.32
+
+data:
+  images_dir_train: .
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data_ultra_augmented_fixed.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+train:
+  seed: 1001
+  epochs: 50
+  batch_size: 38
+  num_workers: 8
+  lr: 0.00012
+  weight_decay: 0.0003
+  optimizer: adamw
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.5, 15.0]
+  focal_gamma: 2.5
+  label_smoothing: 0.10
+  use_mixup: true
+  mixup_prob: 0.55
+  use_cutmix: true
+  cutmix_prob: 0.45
+  use_swa: false
+  use_ema: true
+  ema_decay: 0.9999
+  early_stopping_patience: 15
+  scheduler: cosine
+  warmup_epochs: 4
+  augment: true
+  advanced_aug: true
+  use_weighted_sampler: true
+
+out:
+  dir: outputs/ultra_model1
+  checkpoint_path: outputs/ultra_model1/best.pt
+  submission_path: data/submission_ultra1.csv
