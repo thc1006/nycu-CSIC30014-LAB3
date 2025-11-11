@@ -1,0 +1,85 @@
+# 🔥 終極榨乾 GPU 配置 - GPU Caching + 大 Batch
+# RTX 4070 Ti SUPER 16GB 極限配置
+
+inherits: configs/base_colab.yaml
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  train_csv: data/fold1_train.csv
+  val_csv: data/fold1_val.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+  # ⚠️ GPU Caching 模式下醫學預處理需要特殊處理
+  # 目前先關閉，在 GPU 上做增強
+  medical_preprocessing: false
+
+train:
+  seed: 42
+
+  # 🚀 極限配置
+  epochs: 35
+  batch_size: 64  # 🔥 進一步增加到 64
+
+  # ⚡ GPU Caching - 消除 I/O 瓶頸
+  use_gpu_cache: true  # 🚀 關鍵！預載所有影像到 GPU
+
+  # 優化器
+  num_workers: 0  # GPU Cache 不需要 workers
+  lr: 0.00012  # 配合更大 batch
+  weight_decay: 0.0005
+  optimizer: adamw
+
+  # 學習率調度
+  scheduler: cosine
+  warmup_epochs: 3
+
+  # 處理不平衡
+  use_weighted_sampler: true
+
+  # Focal Loss
+  loss: improved_focal
+  focal_alpha: [1.0, 2.0, 2.0, 20.0]
+  focal_gamma: 3.0
+  label_smoothing: 0.05
+
+  # 資料增強 (GPU 原生)
+  augment: true
+  advanced_aug: true
+  mixup_prob: 0.4
+  mixup_alpha: 1.0
+  cutmix_prob: 0.4
+  cutmix_alpha: 1.0
+
+  # 高級增強
+  aug_rotation: 12
+  aug_translate: 0.08
+  aug_scale_min: 0.92
+  aug_scale_max: 1.08
+  aug_shear: 8
+  random_erasing_prob: 0.25
+
+  # SWA
+  use_swa: true
+  swa_start_epoch: 27
+  swa_lr: 0.00005
+
+perf:
+  # 🚀 GPU 優化
+  amp_dtype: fp16  # 混合精度節省 VRAM
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+model:
+  name: efficientnet_b0  # 使用 B0 以節省 VRAM 給 caching
+  img_size: 320  # 320px 平衡速度和準確度
+  pretrained: true
+
+out:
+  dir: outputs/ultimate_gpu/fold1
+  checkpoint_path: outputs/ultimate_gpu/fold1/best.pt
+  submission_path: data/submission_ultimate_fold1.csv

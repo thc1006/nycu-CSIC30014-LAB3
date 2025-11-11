@@ -230,18 +230,26 @@ def main(args):
         if use_gpu_cache:
             print("[WARNING] GPU cache requested but no CUDA available, using standard loader")
 
+        # 🏥 醫學影像預處理參數
+        medical_preprocessing = data_cfg.get("medical_preprocessing", False)
+        preprocessing_preset = data_cfg.get("preprocessing_preset", "default")
+        if medical_preprocessing:
+            print(f"[init] 🏥 Medical preprocessing enabled: {preprocessing_preset}")
+
         print(f"[init] Creating train data loader...")
         train_ds, train_loader = make_loader(
             data_cfg["train_csv"], data_cfg["images_dir_train"], data_cfg["file_col"], data_cfg["label_cols"],
             mdl_cfg["img_size"], train_cfg["batch_size"], train_cfg["num_workers"], augment=True,
             shuffle=True, weighted=bool(train_cfg.get("use_weighted_sampler", False)),
-            advanced_aug=advanced_aug, aug_config=aug_config
+            advanced_aug=advanced_aug, aug_config=aug_config,
+            medical_preprocessing=medical_preprocessing, preprocessing_preset=preprocessing_preset
         )
         print(f"[init] Train loader created. Creating val data loader...")
         val_ds, val_loader = make_loader(
             data_cfg["val_csv"], data_cfg["images_dir_val"], data_cfg["file_col"], data_cfg["label_cols"],
             mdl_cfg["img_size"], train_cfg["batch_size"], train_cfg["num_workers"], augment=False,
-            shuffle=False, weighted=False
+            shuffle=False, weighted=False,
+            medical_preprocessing=medical_preprocessing, preprocessing_preset=preprocessing_preset
         )
 
     print(f"[init] Data loaders created. Building model...")

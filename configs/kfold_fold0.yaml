@@ -1,0 +1,86 @@
+# K-Fold Cross Validation 配置 + 醫學影像預處理
+# 目標: 減少過擬合，提升測試集泛化能力
+# 策略: 5-Fold CV + CLAHE + 更強正則化
+
+inherits: configs/base_colab.yaml
+
+data:
+  # K-Fold 會動態設置這些路徑
+  images_dir_train: train_images  # 會被 train.py 動態修改
+  images_dir_val: val_images      # 會被 train.py 動態修改
+  train_csv: data/fold0_train.csv  # 動態設置
+  val_csv: data/fold0_val.csv      # 動態設置
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+  # 🏥 醫學影像預處理
+  medical_preprocessing: true
+  preprocessing_preset: default  # default | aggressive | conservative
+
+train:
+  seed: 42
+
+  # 🎯 減少過擬合 - 較短訓練
+  epochs: 30  # 從 40 降到 30
+  batch_size: 24  # 略增加以加快訓練
+
+  # 優化器配置
+  num_workers: 8
+  lr: 0.00008  # 略降低學習率
+  weight_decay: 0.0005  # 增加權重衰減（從 0.0001）
+  optimizer: adamw
+
+  # 學習率調度
+  scheduler: cosine
+  warmup_epochs: 3  # 縮短 warmup
+
+  # 關鍵：處理極度不平衡
+  use_weighted_sampler: true
+
+  # 🎯 優化 Focal Loss 權重
+  loss: improved_focal
+  focal_alpha: [1.0, 2.0, 2.0, 20.0]  # COVID-19 權重從 15.0 → 20.0
+  focal_gamma: 3.0
+  label_smoothing: 0.05  # 降低（從 0.1）以減少過擬合
+
+  # 🔥 保持激進的資料增強
+  augment: true
+  advanced_aug: true
+  mixup_prob: 0.4  # 略降低
+  mixup_alpha: 1.0
+  cutmix_prob: 0.4  # 略降低
+  cutmix_alpha: 1.0
+
+  # 高級增強參數
+  aug_rotation: 12  # 降低（從 15）
+  aug_translate: 0.08  # 降低（從 0.1）
+  aug_scale_min: 0.92  # 更保守
+  aug_scale_max: 1.08
+  aug_shear: 8  # 降低（從 10）
+  random_erasing_prob: 0.25  # 降低（從 0.3）
+
+  # 🌟 SWA - 從更早開始
+  use_swa: true
+  swa_start_epoch: 22  # 從 30 → 22
+  swa_lr: 0.00004  # 略降低
+
+perf:
+  # 🚀 混合精度訓練
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+model:
+  # 🎯 使用稍小的模型減少過擬合
+  name: efficientnet_b0  # 從 efficientnet_v2_s 改為 b0
+  img_size: 320  # 從 384 降到 320（加快訓練）
+  pretrained: true
+  # dropout 在 EfficientNet 中已內建，無需額外設置
+
+out:
+  dir: outputs/kfold_run/fold0
+  checkpoint_path: outputs/kfold_run/fold0/best.pt
+  submission_path: data/submission_kfold_fold0.csv

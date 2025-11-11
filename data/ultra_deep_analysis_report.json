@@ -1,0 +1,964 @@
+{
+  "csv_structures": {
+    "submission_final_fold4.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "submission_improved.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "submission_final_fold1.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "fold1_train.csv": {
+      "rows": 2717,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "test_data_sample.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 1182,
+        "bacteria": 1182,
+        "virus": 1182,
+        "COVID-19": 1182
+      }
+    },
+    "fold3_val.csv": {
+      "rows": 679,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "fold1_val.csv": {
+      "rows": 680,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "fold4_val.csv": {
+      "rows": 679,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "submission_final_fold3.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "fold2_train.csv": {
+      "rows": 2718,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "fold3_train.csv": {
+      "rows": 2718,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "submission_breakthrough.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "submission_ensemble_7models.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "submission_final.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "submission_final_fold2.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "submission_final_fold0.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "fold2_val.csv": {
+      "rows": 679,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "val_data.csv": {
+      "rows": 163,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    },
+    "fold0_val.csv": {
+      "rows": 680,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "fold4_train.csv": {
+      "rows": 2718,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "fold0_train.csv": {
+      "rows": 2717,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19",
+        "source_dir",
+        "class_label"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64",
+        "source_dir": "object",
+        "class_label": "object"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0,
+        "source_dir": 0,
+        "class_label": 0
+      }
+    },
+    "test_data.csv": {
+      "rows": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "float64",
+        "bacteria": "float64",
+        "virus": "float64",
+        "COVID-19": "float64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 1182,
+        "bacteria": 1182,
+        "virus": 1182,
+        "COVID-19": 1182
+      }
+    },
+    "train_data.csv": {
+      "rows": 3234,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ],
+      "dtypes": {
+        "new_filename": "object",
+        "normal": "int64",
+        "bacteria": "int64",
+        "virus": "int64",
+        "COVID-19": "int64"
+      },
+      "null_counts": {
+        "new_filename": 0,
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    }
+  },
+  "class_distributions": {
+    "train": {
+      "total_samples": 3234,
+      "class_counts": {
+        "normal": 863,
+        "bacteria": 1512,
+        "virus": 827,
+        "COVID-19": 32
+      },
+      "imbalance_ratio": 47.25
+    },
+    "val": {
+      "total_samples": 163,
+      "class_counts": {
+        "normal": 43,
+        "bacteria": 69,
+        "virus": 49,
+        "COVID-19": 2
+      },
+      "imbalance_ratio": 34.5
+    },
+    "test": {
+      "total_samples": 1182,
+      "class_counts": {
+        "normal": 0,
+        "bacteria": 0,
+        "virus": 0,
+        "COVID-19": 0
+      }
+    }
+  },
+  "image_statistics": {
+    "train": {
+      "width": {
+        "mean": 1321.88,
+        "std": 389.9866223346642,
+        "min": "460",
+        "max": "2431"
+      },
+      "height": {
+        "mean": 964.67,
+        "std": 390.7763824746833,
+        "min": "157",
+        "max": "2195"
+      },
+      "aspect_ratio": {
+        "mean": 1.4502877038417412,
+        "std": 0.26762475374368877
+      },
+      "file_size_kb": {
+        "mean": 121.118740234375,
+        "std": 83.74129499477463
+      }
+    },
+    "val": {
+      "width": {
+        "mean": 1334.59,
+        "std": 378.42072075931566,
+        "min": "428",
+        "max": "2480"
+      },
+      "height": {
+        "mean": 950.7,
+        "std": 385.2052829336586,
+        "min": "172",
+        "max": "1966"
+      },
+      "aspect_ratio": {
+        "mean": 1.485387587389958,
+        "std": 0.2679650889697136
+      },
+      "file_size_kb": {
+        "mean": 116.12591796875,
+        "std": 80.38852222759198
+      }
+    },
+    "test": {
+      "width": {
+        "mean": 1306.46,
+        "std": 314.27616581599057,
+        "min": "760",
+        "max": "2450"
+      },
+      "height": {
+        "mean": 945.27,
+        "std": 321.0042945195593,
+        "min": "488",
+        "max": "2145"
+      },
+      "aspect_ratio": {
+        "mean": 1.43425370208205,
+        "std": 0.21862393719744697
+      },
+      "file_size_kb": {
+        "mean": 121.754716796875,
+        "std": 109.88567174632794
+      }
+    }
+  },
+  "filename_patterns": {
+    "train": {
+      "extensions": {
+        ".jpeg": 3218,
+        ".png": 5,
+        ".jpg": 11
+      },
+      "numeric_ids": true,
+      "id_range": [
+        0,
+        5907
+      ]
+    },
+    "val": {
+      "extensions": {
+        ".jpeg": 162,
+        ".jpg": 1
+      },
+      "numeric_ids": true,
+      "id_range": [
+        9,
+        5840
+      ]
+    },
+    "test": {
+      "extensions": {
+        ".jpeg": 1177,
+        ".jpg": 3,
+        ".png": 2
+      },
+      "numeric_ids": true,
+      "id_range": [
+        7,
+        5901
+      ]
+    }
+  },
+  "kfold_analysis": {
+    "fold0": {
+      "train_samples": 2717,
+      "val_samples": 680,
+      "train_distribution": {
+        "normal": "725",
+        "bacteria": "1265",
+        "virus": "700",
+        "COVID-19": "27"
+      },
+      "val_distribution": {
+        "normal": "181",
+        "bacteria": "316",
+        "virus": "176",
+        "COVID-19": "7"
+      }
+    },
+    "fold1": {
+      "train_samples": 2717,
+      "val_samples": 680,
+      "train_distribution": {
+        "normal": "724",
+        "bacteria": "1265",
+        "virus": "701",
+        "COVID-19": "27"
+      },
+      "val_distribution": {
+        "normal": "182",
+        "bacteria": "316",
+        "virus": "175",
+        "COVID-19": "7"
+      }
+    },
+    "fold2": {
+      "train_samples": 2718,
+      "val_samples": 679,
+      "train_distribution": {
+        "normal": "725",
+        "bacteria": "1264",
+        "virus": "701",
+        "COVID-19": "28"
+      },
+      "val_distribution": {
+        "normal": "181",
+        "bacteria": "317",
+        "virus": "175",
+        "COVID-19": "6"
+      }
+    },
+    "fold3": {
+      "train_samples": 2718,
+      "val_samples": 679,
+      "train_distribution": {
+        "normal": "725",
+        "bacteria": "1265",
+        "virus": "701",
+        "COVID-19": "27"
+      },
+      "val_distribution": {
+        "normal": "181",
+        "bacteria": "316",
+        "virus": "175",
+        "COVID-19": "7"
+      }
+    },
+    "fold4": {
+      "train_samples": 2718,
+      "val_samples": 679,
+      "train_distribution": {
+        "normal": "725",
+        "bacteria": "1265",
+        "virus": "701",
+        "COVID-19": "27"
+      },
+      "val_distribution": {
+        "normal": "181",
+        "bacteria": "316",
+        "virus": "175",
+        "COVID-19": "7"
+      }
+    }
+  },
+  "submissions": {
+    "submission_final_fold4.csv": {
+      "distribution": {
+        "virus": 297,
+        "bacteria": 594,
+        "normal": 275,
+        "COVID-19": 16
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_improved.csv": {
+      "distribution": {
+        "virus": 292,
+        "bacteria": 547,
+        "normal": 328,
+        "COVID-19": 15
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_final_fold1.csv": {
+      "distribution": {
+        "bacteria": 669,
+        "virus": 237,
+        "normal": 265,
+        "COVID-19": 11
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_final_fold3.csv": {
+      "distribution": {
+        "bacteria": 673,
+        "virus": 231,
+        "normal": 264,
+        "COVID-19": 14
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_breakthrough.csv": {
+      "distribution": {
+        "virus": 341,
+        "bacteria": 484,
+        "normal": 341,
+        "COVID-19": 16
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_ensemble_7models.csv": {
+      "distribution": {
+        "virus": 288,
+        "bacteria": 588,
+        "normal": 290,
+        "COVID-19": 16
+      },
+      "avg_confidence": 0.9105632100555958
+    },
+    "submission_final.csv": {
+      "distribution": {
+        "bacteria": 626,
+        "virus": 268,
+        "normal": 272,
+        "COVID-19": 16
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_final_fold2.csv": {
+      "distribution": {
+        "bacteria": 604,
+        "normal": 213,
+        "virus": 347,
+        "COVID-19": 18
+      },
+      "avg_confidence": 1.0
+    },
+    "submission_final_fold0.csv": {
+      "distribution": {
+        "virus": 341,
+        "bacteria": 542,
+        "normal": 281,
+        "COVID-19": 18
+      },
+      "avg_confidence": 1.0
+    }
+  },
+  "data_leakage": {
+    "train_val_overlap": 0,
+    "train_test_overlap": 0,
+    "val_test_overlap": 0
+  },
+  "outliers": {
+    "train": {
+      "count": 2,
+      "examples": [
+        "5311.jpeg",
+        "600.jpeg"
+      ]
+    },
+    "val": {
+      "count": 4,
+      "examples": [
+        "5312.jpeg",
+        "1270.jpeg",
+        "814.jpeg",
+        "1273.jpeg"
+      ]
+    }
+  },
+  "missing_data": {
+    "train": {},
+    "val": {},
+    "test": {
+      "normal": 1182,
+      "bacteria": 1182,
+      "virus": 1182,
+      "COVID-19": 1182
+    }
+  },
+  "insights": [
+    {
+      "type": "CRITICAL",
+      "category": "Class Imbalance",
+      "finding": "Extreme class imbalance detected (ratio: 47.2:1)",
+      "recommendation": "Use strong class weighting (15-20x for minority class), Focal Loss with high gamma (3.5+), or oversampling"
+    },
+    {
+      "type": "WARNING",
+      "category": "Prediction Confidence",
+      "finding": "Very high prediction confidence (0.990) - possible overfitting",
+      "recommendation": "Add more regularization, stronger augmentation, or use label smoothing"
+    }
+  ]
+}

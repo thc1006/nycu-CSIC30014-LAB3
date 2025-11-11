@@ -1,0 +1,680 @@
+{
+  "by_category": {
+    "COVID-19": [
+      [
+        "30.jpeg",
+        "train_images"
+      ],
+      [
+        "15.jpeg",
+        "train_images"
+      ],
+      [
+        "24.jpeg",
+        "train_images"
+      ],
+      [
+        "48.png",
+        "train_images"
+      ],
+      [
+        "0.jpg",
+        "train_images"
+      ],
+      [
+        "35.png",
+        "train_images"
+      ],
+      [
+        "52.jpg",
+        "train_images"
+      ],
+      [
+        "11.jpeg",
+        "train_images"
+      ],
+      [
+        "1.jpg",
+        "train_images"
+      ],
+      [
+        "17.jpeg",
+        "train_images"
+      ],
+      [
+        "8.jpg",
+        "train_images"
+      ],
+      [
+        "5.jpg",
+        "train_images"
+      ],
+      [
+        "31.jpeg",
+        "train_images"
+      ],
+      [
+        "56.jpg",
+        "train_images"
+      ],
+      [
+        "13.jpeg",
+        "train_images"
+      ],
+      [
+        "23.png",
+        "train_images"
+      ],
+      [
+        "33.jpeg",
+        "train_images"
+      ],
+      [
+        "36.png",
+        "train_images"
+      ],
+      [
+        "46.png",
+        "train_images"
+      ],
+      [
+        "4.jpg",
+        "train_images"
+      ],
+      [
+        "2.jpg",
+        "train_images"
+      ],
+      [
+        "6.jpg",
+        "train_images"
+      ],
+      [
+        "37.jpeg",
+        "train_images"
+      ],
+      [
+        "53.jpg",
+        "train_images"
+      ],
+      [
+        "32.jpeg",
+        "train_images"
+      ],
+      [
+        "44.jpeg",
+        "train_images"
+      ],
+      [
+        "19.jpeg",
+        "train_images"
+      ],
+      [
+        "41.jpeg",
+        "train_images"
+      ],
+      [
+        "40.jpeg",
+        "train_images"
+      ],
+      [
+        "45.jpeg",
+        "train_images"
+      ],
+      [
+        "29.jpeg",
+        "train_images"
+      ],
+      [
+        "25.jpeg",
+        "train_images"
+      ],
+      [
+        "9.jpg",
+        "val_images"
+      ],
+      [
+        "27.jpeg",
+        "val_images"
+      ]
+    ],
+    "bacteria": [
+      [
+        "3138.jpeg",
+        "train_images"
+      ],
+      [
+        "2082.jpeg",
+        "train_images"
+      ],
+      [
+        "2186.jpeg",
+        "train_images"
+      ],
+      [
+        "2881.jpeg",
+        "train_images"
+      ],
+      [
+        "2566.jpeg",
+        "val_images"
+      ],
+      [
+        "1876.jpeg",
+        "train_images"
+      ],
+      [
+        "5663.jpeg",
+        "train_images"
+      ],
+      [
+        "3410.jpeg",
+        "train_images"
+      ],
+      [
+        "5117.jpeg",
+        "train_images"
+      ],
+      [
+        "5657.jpeg",
+        "train_images"
+      ],
+      [
+        "2248.jpeg",
+        "train_images"
+      ],
+      [
+        "3769.jpeg",
+        "train_images"
+      ],
+      [
+        "5668.jpeg",
+        "train_images"
+      ],
+      [
+        "1413.jpeg",
+        "val_images"
+      ],
+      [
+        "2217.jpeg",
+        "train_images"
+      ]
+    ],
+    "virus": [
+      [
+        "4431.jpeg",
+        "train_images"
+      ],
+      [
+        "5789.jpeg",
+        "train_images"
+      ],
+      [
+        "1894.jpeg",
+        "train_images"
+      ],
+      [
+        "5786.jpeg",
+        "train_images"
+      ],
+      [
+        "3427.jpeg",
+        "train_images"
+      ],
+      [
+        "5809.jpeg",
+        "train_images"
+      ],
+      [
+        "5899.jpeg",
+        "train_images"
+      ],
+      [
+        "5778.jpeg",
+        "train_images"
+      ],
+      [
+        "1914.jpeg",
+        "train_images"
+      ],
+      [
+        "4113.jpeg",
+        "train_images"
+      ],
+      [
+        "5903.jpeg",
+        "train_images"
+      ],
+      [
+        "4768.jpeg",
+        "train_images"
+      ],
+      [
+        "2339.jpeg",
+        "train_images"
+      ],
+      [
+        "3496.jpeg",
+        "train_images"
+      ],
+      [
+        "1489.jpeg",
+        "train_images"
+      ]
+    ],
+    "normal": [
+      [
+        "722.jpeg",
+        "train_images"
+      ],
+      [
+        "447.jpeg",
+        "train_images"
+      ],
+      [
+        "5444.jpeg",
+        "train_images"
+      ],
+      [
+        "5410.jpeg",
+        "train_images"
+      ],
+      [
+        "367.jpeg",
+        "train_images"
+      ],
+      [
+        "517.jpeg",
+        "train_images"
+      ],
+      [
+        "319.jpeg",
+        "train_images"
+      ],
+      [
+        "545.jpeg",
+        "train_images"
+      ],
+      [
+        "1038.jpeg",
+        "train_images"
+      ],
+      [
+        "576.jpeg",
+        "train_images"
+      ]
+    ]
+  },
+  "flat_list": [
+    {
+      "label": "COVID-19",
+      "filename": "30.jpeg",
+      "path": "train_images/30.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "15.jpeg",
+      "path": "train_images/15.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "24.jpeg",
+      "path": "train_images/24.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "48.png",
+      "path": "train_images/48.png"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "0.jpg",
+      "path": "train_images/0.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "35.png",
+      "path": "train_images/35.png"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "52.jpg",
+      "path": "train_images/52.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "11.jpeg",
+      "path": "train_images/11.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "1.jpg",
+      "path": "train_images/1.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "17.jpeg",
+      "path": "train_images/17.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "8.jpg",
+      "path": "train_images/8.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "5.jpg",
+      "path": "train_images/5.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "31.jpeg",
+      "path": "train_images/31.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "56.jpg",
+      "path": "train_images/56.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "13.jpeg",
+      "path": "train_images/13.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "23.png",
+      "path": "train_images/23.png"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "33.jpeg",
+      "path": "train_images/33.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "36.png",
+      "path": "train_images/36.png"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "46.png",
+      "path": "train_images/46.png"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "4.jpg",
+      "path": "train_images/4.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "2.jpg",
+      "path": "train_images/2.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "6.jpg",
+      "path": "train_images/6.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "37.jpeg",
+      "path": "train_images/37.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "53.jpg",
+      "path": "train_images/53.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "32.jpeg",
+      "path": "train_images/32.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "44.jpeg",
+      "path": "train_images/44.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "19.jpeg",
+      "path": "train_images/19.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "41.jpeg",
+      "path": "train_images/41.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "40.jpeg",
+      "path": "train_images/40.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "45.jpeg",
+      "path": "train_images/45.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "29.jpeg",
+      "path": "train_images/29.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "25.jpeg",
+      "path": "train_images/25.jpeg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "9.jpg",
+      "path": "val_images/9.jpg"
+    },
+    {
+      "label": "COVID-19",
+      "filename": "27.jpeg",
+      "path": "val_images/27.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "3138.jpeg",
+      "path": "train_images/3138.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "2082.jpeg",
+      "path": "train_images/2082.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "2186.jpeg",
+      "path": "train_images/2186.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "2881.jpeg",
+      "path": "train_images/2881.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "2566.jpeg",
+      "path": "val_images/2566.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "1876.jpeg",
+      "path": "train_images/1876.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "5663.jpeg",
+      "path": "train_images/5663.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "3410.jpeg",
+      "path": "train_images/3410.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "5117.jpeg",
+      "path": "train_images/5117.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "5657.jpeg",
+      "path": "train_images/5657.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "2248.jpeg",
+      "path": "train_images/2248.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "3769.jpeg",
+      "path": "train_images/3769.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "5668.jpeg",
+      "path": "train_images/5668.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "1413.jpeg",
+      "path": "val_images/1413.jpeg"
+    },
+    {
+      "label": "bacteria",
+      "filename": "2217.jpeg",
+      "path": "train_images/2217.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "4431.jpeg",
+      "path": "train_images/4431.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "5789.jpeg",
+      "path": "train_images/5789.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "1894.jpeg",
+      "path": "train_images/1894.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "5786.jpeg",
+      "path": "train_images/5786.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "3427.jpeg",
+      "path": "train_images/3427.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "5809.jpeg",
+      "path": "train_images/5809.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "5899.jpeg",
+      "path": "train_images/5899.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "5778.jpeg",
+      "path": "train_images/5778.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "1914.jpeg",
+      "path": "train_images/1914.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "4113.jpeg",
+      "path": "train_images/4113.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "5903.jpeg",
+      "path": "train_images/5903.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "4768.jpeg",
+      "path": "train_images/4768.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "2339.jpeg",
+      "path": "train_images/2339.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "3496.jpeg",
+      "path": "train_images/3496.jpeg"
+    },
+    {
+      "label": "virus",
+      "filename": "1489.jpeg",
+      "path": "train_images/1489.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "722.jpeg",
+      "path": "train_images/722.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "447.jpeg",
+      "path": "train_images/447.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "5444.jpeg",
+      "path": "train_images/5444.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "5410.jpeg",
+      "path": "train_images/5410.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "367.jpeg",
+      "path": "train_images/367.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "517.jpeg",
+      "path": "train_images/517.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "319.jpeg",
+      "path": "train_images/319.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "545.jpeg",
+      "path": "train_images/545.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "1038.jpeg",
+      "path": "train_images/1038.jpeg"
+    },
+    {
+      "label": "normal",
+      "filename": "576.jpeg",
+      "path": "train_images/576.jpeg"
+    }
+  ]
+}

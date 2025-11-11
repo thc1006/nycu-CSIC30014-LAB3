@@ -1,0 +1,91 @@
+# Ultra-Optimized ConvNeXt-Base Configuration
+# Based on ultra-deep data analysis findings
+# Target: 91%+ accuracy
+
+inherits: configs/base_colab.yaml
+
+# Data paths
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+# Model configuration
+model:
+  name: convnext_base
+  img_size: 448  # Increased from 384 to utilize 1321x964 images better
+  dropout: 0.35  # Increased from 0.25 to reduce overfitting
+
+# Training configuration
+train:
+  seed: 42
+
+  # Extended training
+  epochs: 40
+  batch_size: 16  # Smaller batch for larger model + larger images
+
+  # Optimizer
+  num_workers: 8
+  lr: 0.00008  # Lower for larger model
+  weight_decay: 0.00025  # Increased regularization
+  optimizer: adamw
+
+  # Scheduler
+  scheduler: cosine
+  warmup_epochs: 4
+
+  # Critical: Extreme class weighting for COVID-19
+  use_weighted_sampler: true
+
+  # Loss - EXTREME focus on minority class
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.0, 20.0]  # 20x weight for COVID-19 (was 15.0)
+  focal_gamma: 4.0  # Increased from 3.0 for extreme imbalance
+  label_smoothing: 0.15  # Increased from 0.1 to reduce overconfidence
+
+  # Aggressive augmentation to reduce overfitting
+  augment: true
+  advanced_aug: true
+
+  # Mixup/CutMix - more aggressive
+  mixup_prob: 0.7  # Increased from 0.5
+  mixup_alpha: 1.5  # Increased from 1.0
+  cutmix_prob: 0.5
+  cutmix_alpha: 1.2  # Increased from 1.0
+
+  # Additional augmentation
+  vertical_flip_prob: 0.3
+  gaussian_noise_prob: 0.15
+  gaussian_blur_prob: 0.2
+  random_erasing_prob: 0.3  # Increased from 0.2
+
+  # Advanced techniques
+  use_swa: true  # Stochastic Weight Averaging
+  swa_start_epoch: 30
+  swa_lr: 0.00005
+
+  use_ema: true  # Exponential Moving Average
+  ema_decay: 0.9999
+
+  # Mixed precision for memory efficiency
+  mixed_precision: true
+
+  # Gradient clipping
+  grad_clip: 1.0
+
+  # Early stopping
+  patience: 12  # Increased for larger model
+  min_delta: 0.001
+
+# Logging
+logging:
+  experiment_name: ultra_optimized
+  save_dir: outputs/ultra_optimized
+  log_interval: 20
+  tensorboard: true

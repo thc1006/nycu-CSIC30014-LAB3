@@ -1,0 +1,91 @@
+# 改進的 Breakthrough 配置
+# 基於 0.81977 的成功配置，進一步優化
+# 目標: 突破 82%+
+
+inherits: configs/base_colab.yaml
+
+data:
+  # 使用原始資料分割 (與測試集分布一致)
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+  # ❌ 不使用醫學預處理 (會破壞 ImageNet features)
+  medical_preprocessing: false
+
+train:
+  seed: 42
+
+  # 優化訓練時長
+  epochs: 45  # 增加 5 epochs
+  batch_size: 24  # 稍微增加 batch (from 20)
+
+  # 優化器配置
+  num_workers: 10
+  lr: 0.00008  # 略降學習率 (from 0.0001)
+  weight_decay: 0.00015  # 增加正則化 (from 0.0001)
+  optimizer: adamw
+
+  # 學習率調度
+  scheduler: cosine
+  warmup_epochs: 6  # 更長 warmup (from 5)
+
+  # 處理極度不平衡
+  use_weighted_sampler: true
+
+  # 🎯 核心：優化 Focal Loss 權重
+  loss: improved_focal
+  focal_alpha: [1.0, 1.5, 2.0, 12.0]  # COVID-19 降至 12 (from 15)
+  focal_gamma: 3.5  # 增加 gamma 專注困難樣本 (from 3.0)
+  label_smoothing: 0.12  # 略增 smoothing (from 0.1)
+
+  # 🔥 增強的資料增強
+  augment: true
+  advanced_aug: true
+  mixup_prob: 0.6  # 增加 mixup (from 0.5)
+  mixup_alpha: 1.2  # 更強 mixup (from 1.0)
+  cutmix_prob: 0.5
+  cutmix_alpha: 1.0
+
+  # 高級增強參數
+  aug_rotation: 18  # 略增旋轉 (from 15)
+  aug_translate: 0.12  # 略增平移 (from 0.1)
+  aug_scale_min: 0.88  # 更大範圍 (from 0.9)
+  aug_scale_max: 1.12  # 更大範圍 (from 1.1)
+  aug_shear: 12  # 增加剪切 (from 10)
+  random_erasing_prob: 0.35  # 增加擦除 (from 0.3)
+
+  # 🌟 Stochastic Weight Averaging
+  use_swa: true
+  swa_start_epoch: 35  # 延後啟動 (from 30)
+  swa_lr: 0.00004  # 降低 SWA lr (from 0.00005)
+
+  # 早停
+  early_stopping: true
+  patience: 12  # 增加 patience (from 10)
+  min_delta: 0.0001
+
+perf:
+  # 混合精度訓練
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+model:
+  # 關鍵：保持 384px 高解析度
+  name: efficientnet_v2_s
+  img_size: 384  # ✅ 保持 384 (不降至 352)
+  pretrained: true
+  dropout: 0.25  # 增加 dropout 防止過擬合
+
+out:
+  dir: outputs/improved_breakthrough
+  checkpoint_path: outputs/improved_breakthrough/best.pt
+  submission_path: data/submission_improved.csv

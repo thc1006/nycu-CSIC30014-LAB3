@@ -1,0 +1,83 @@
+# 🚀 榨乾 GPU 配置 - RTX 4070 Ti SUPER 最大化
+# 目標: 最大化 GPU 利用率和 VRAM 使用
+
+inherits: configs/base_colab.yaml
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  train_csv: data/fold0_train.csv
+  val_csv: data/fold0_val.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+  # 🏥 醫學影像預處理
+  medical_preprocessing: true
+  preprocessing_preset: default
+
+train:
+  seed: 42
+
+  # 🔥 榨乾 GPU - 更長訓練
+  epochs: 35  # 增加到 35
+  batch_size: 48  # 🚀 從 24 翻倍到 48 (榨乾 16GB VRAM)
+
+  # 優化器配置
+  num_workers: 12  # 增加 CPU 線程數
+  lr: 0.0001  # 略微提高學習率配合更大 batch
+  weight_decay: 0.0005
+  optimizer: adamw
+
+  # 學習率調度
+  scheduler: cosine
+  warmup_epochs: 3
+
+  # 處理極度不平衡
+  use_weighted_sampler: true
+
+  # 🎯 優化 Focal Loss
+  loss: improved_focal
+  focal_alpha: [1.0, 2.0, 2.0, 20.0]
+  focal_gamma: 3.0
+  label_smoothing: 0.05
+
+  # 🔥 激進的資料增強
+  augment: true
+  advanced_aug: true
+  mixup_prob: 0.4
+  mixup_alpha: 1.0
+  cutmix_prob: 0.4
+  cutmix_alpha: 1.0
+
+  # 高級增強參數
+  aug_rotation: 12
+  aug_translate: 0.08
+  aug_scale_min: 0.92
+  aug_scale_max: 1.08
+  aug_shear: 8
+  random_erasing_prob: 0.25
+
+  # 🌟 SWA
+  use_swa: true
+  swa_start_epoch: 27
+  swa_lr: 0.00005
+
+perf:
+  # 🚀 榨乾 GPU
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+model:
+  # 🎯 更大的模型以利用更多 GPU
+  name: efficientnet_v2_s  # 恢復使用 V2-S (比 B0 大)
+  img_size: 384  # 恢復 384px (更高解析度)
+  pretrained: true
+
+out:
+  dir: outputs/kfold_max_gpu/fold{fold_id}
+  checkpoint_path: outputs/kfold_max_gpu/fold{fold_id}/best.pt
+  submission_path: data/submission_max_gpu_fold{fold_id}.csv

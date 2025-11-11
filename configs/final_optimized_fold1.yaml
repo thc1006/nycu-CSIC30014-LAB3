@@ -1,0 +1,76 @@
+# 🚀 最終優化配置 - 榨乾 GPU (不用 Caching)
+# 策略: 大 Batch + 醫學預處理 + K-Fold CV
+
+inherits: configs/base_colab.yaml
+
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  train_csv: data/fold1_train.csv
+  val_csv: data/fold1_val.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+  # 🏥 醫學影像預處理 (CLAHE + Unsharp)
+  medical_preprocessing: true
+  preprocessing_preset: default
+
+train:
+  seed: 42
+
+  epochs: 35
+  batch_size: 56  # 🔥 榨乾 GPU - 最大 batch size
+
+  num_workers: 10
+  lr: 0.00011
+  weight_decay: 0.0005
+  optimizer: adamw
+
+  scheduler: cosine
+  warmup_epochs: 3
+
+  use_weighted_sampler: true
+
+  # Focal Loss
+  loss: improved_focal
+  focal_alpha: [1.0, 2.0, 2.0, 20.0]
+  focal_gamma: 3.0
+  label_smoothing: 0.05
+
+  # 資料增強
+  augment: true
+  advanced_aug: true
+  mixup_prob: 0.4
+  mixup_alpha: 1.0
+  cutmix_prob: 0.4
+  cutmix_alpha: 1.0
+
+  aug_rotation: 12
+  aug_translate: 0.08
+  aug_scale_min: 0.92
+  aug_scale_max: 1.08
+  aug_shear: 8
+  random_erasing_prob: 0.25
+
+  # SWA
+  use_swa: true
+  swa_start_epoch: 27
+  swa_lr: 0.00005
+
+perf:
+  amp_dtype: fp16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: high
+
+model:
+  name: efficientnet_v2_s  # 🔥 使用 V2-S (更強)
+  img_size: 352  # 352px 平衡
+  pretrained: true
+
+out:
+  dir: outputs/final_optimized/fold1
+  checkpoint_path: outputs/final_optimized/fold1/best.pt
+  submission_path: data/submission_final_fold1.csv

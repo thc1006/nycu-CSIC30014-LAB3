@@ -1,0 +1,37 @@
+[
+  {
+    "fold": 0,
+    "train_size": 2717,
+    "val_size": 680,
+    "train_covid": 27,
+    "val_covid": 7
+  },
+  {
+    "fold": 1,
+    "train_size": 2717,
+    "val_size": 680,
+    "train_covid": 27,
+    "val_covid": 7
+  },
+  {
+    "fold": 2,
+    "train_size": 2718,
+    "val_size": 679,
+    "train_covid": 28,
+    "val_covid": 6
+  },
+  {
+    "fold": 3,
+    "train_size": 2718,
+    "val_size": 679,
+    "train_covid": 27,
+    "val_covid": 7
+  },
+  {
+    "fold": 4,
+    "train_size": 2718,
+    "val_size": 679,
+    "train_covid": 27,
+    "val_covid": 7
+  }
+]

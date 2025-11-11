@@ -4,7 +4,7 @@ from PIL import Image
 from .aug import build_transforms
 
 class CSVDataset(Dataset):
-    def __init__(self, csv_path, images_dir, file_col, label_cols, img_size=224, augment=True, advanced_aug=False, aug_config=None):
+    def __init__(self, csv_path, images_dir, file_col, label_cols, img_size=224, augment=True, advanced_aug=False, aug_config=None, medical_preprocessing=False, preprocessing_preset='default'):
         self.df = pd.read_csv(csv_path)
         self.images_dir = images_dir
         self.file_col = file_col
@@ -12,13 +12,33 @@ class CSVDataset(Dataset):
         self.img_size = img_size
         self.transforms = build_transforms(img_size, augment, advanced_aug, aug_config)
 
+        # 🏥 醫學影像預處理
+        self.medical_preprocessing = medical_preprocessing
+        if medical_preprocessing:
+            from .medical_preprocessing import create_medical_preprocessor
+            self.medical_preprocessor = create_medical_preprocessor(preprocessing_preset)
+            print(f"[CSVDataset] Medical preprocessing enabled: {preprocessing_preset}")
+
     def __len__(self): return len(self.df)
 
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
         fname = str(row[self.file_col])
-        path = os.path.join(self.images_dir, fname)
+
+        # 支持動態影像目錄 (K-Fold CSV 包含 source_dir 欄位)
+        if 'source_dir' in row.index and pd.notna(row['source_dir']):
+            path = os.path.join(row['source_dir'], fname)
+        else:
+            path = os.path.join(self.images_dir, fname)
+
         image = Image.open(path).convert("RGB")
+
+        # 🏥 應用醫學影像預處理 (在數據增強之前)
+        if self.medical_preprocessing:
+            image = self.medical_preprocessor(image)
+            # 轉回 RGB (預處理後是灰階)
+            image = image.convert("RGB")
+
         x = self.transforms(image)
 
         # one-hot -> class index (argmax). If labels are NaN (test), return -1
@@ -29,8 +49,8 @@ class CSVDataset(Dataset):
             y_idx = -1
         return x, y_idx, fname
 
-def make_loader(csv_path, images_dir, file_col, label_cols, img_size, batch_size, num_workers, augment, shuffle=True, weighted=False, advanced_aug=False, aug_config=None):
-    ds = CSVDataset(csv_path, images_dir, file_col, label_cols, img_size, augment, advanced_aug, aug_config)
+def make_loader(csv_path, images_dir, file_col, label_cols, img_size, batch_size, num_workers, augment, shuffle=True, weighted=False, advanced_aug=False, aug_config=None, medical_preprocessing=False, preprocessing_preset='default'):
+    ds = CSVDataset(csv_path, images_dir, file_col, label_cols, img_size, augment, advanced_aug, aug_config, medical_preprocessing, preprocessing_preset)
 
     # Use pin_memory only if num_workers > 0 and CUDA is available
     use_pin_memory = (num_workers > 0) and torch.cuda.is_available()

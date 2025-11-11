@@ -1,0 +1,91 @@
+# EfficientNet-V2-L Ultra-Optimized Configuration
+# Based on ultra-deep data analysis findings
+# Alternative to ConvNeXt-Base for ensemble diversity
+
+inherits: configs/base_colab.yaml
+
+# Data paths
+data:
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+# Model configuration
+model:
+  name: efficientnet_v2_l
+  img_size: 480  # EfficientNet-V2-L works well with 480px
+  dropout: 0.4  # Higher dropout for larger model
+
+# Training configuration
+train:
+  seed: 42
+
+  # Extended training
+  epochs: 40
+  batch_size: 12  # Smaller batch for very large model + large images
+
+  # Optimizer
+  num_workers: 8
+  lr: 0.00006  # Even lower for very large model
+  weight_decay: 0.0003  # Higher regularization
+  optimizer: adamw
+
+  # Scheduler
+  scheduler: cosine
+  warmup_epochs: 5
+
+  # Critical: Extreme class weighting for COVID-19
+  use_weighted_sampler: true
+
+  # Loss - Same extreme focus as ConvNeXt
+  loss: improved_focal
+  focal_alpha: [1.0, 1.0, 1.0, 20.0]  # 20x weight for COVID-19
+  focal_gamma: 4.0
+  label_smoothing: 0.15
+
+  # Aggressive augmentation for large model
+  augment: true
+  advanced_aug: true
+
+  # Mixup/CutMix
+  mixup_prob: 0.7
+  mixup_alpha: 1.5
+  cutmix_prob: 0.5
+  cutmix_alpha: 1.2
+
+  # Additional augmentation
+  vertical_flip_prob: 0.3
+  gaussian_noise_prob: 0.15
+  gaussian_blur_prob: 0.2
+  random_erasing_prob: 0.3
+
+  # Advanced techniques
+  use_swa: true
+  swa_start_epoch: 30
+  swa_lr: 0.00005
+
+  use_ema: true
+  ema_decay: 0.9999
+
+  # Mixed precision for memory efficiency
+  mixed_precision: true
+
+  # Gradient clipping
+  grad_clip: 1.0
+
+  # Early stopping
+  patience: 12
+  min_delta: 0.001
+
+# Logging
+logging:
+  experiment_name: efficientnet_v2_l
+  save_dir: outputs/efficientnet_v2_l
+  log_interval: 20
+  tensorboard: true

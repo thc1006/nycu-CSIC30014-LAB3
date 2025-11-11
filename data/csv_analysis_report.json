@@ -1,0 +1,121 @@
+{
+  "csv_analysis": {
+    "train": {
+      "total": 3780,
+      "class_distribution": {
+        "normal": {
+          "count": 1009,
+          "percentage": 26.69
+        },
+        "bacteria": {
+          "count": 1776,
+          "percentage": 46.98
+        },
+        "virus": {
+          "count": 958,
+          "percentage": 25.34
+        },
+        "COVID-19": {
+          "count": 37,
+          "percentage": 0.98
+        }
+      }
+    },
+    "val": {
+      "total": 946,
+      "class_distribution": {
+        "normal": {
+          "count": 252,
+          "percentage": 26.64
+        },
+        "bacteria": {
+          "count": 445,
+          "percentage": 47.04
+        },
+        "virus": {
+          "count": 240,
+          "percentage": 25.37
+        },
+        "COVID-19": {
+          "count": 9,
+          "percentage": 0.95
+        }
+      }
+    },
+    "test": {
+      "total": 1182,
+      "columns": [
+        "new_filename",
+        "normal",
+        "bacteria",
+        "virus",
+        "COVID-19"
+      ]
+    }
+  },
+  "class_distribution": {
+    "imbalance": {
+      "normal": {
+        "samples": 1009,
+        "ratio": 0.2669,
+        "imbalance_factor": 3.75
+      },
+      "bacteria": {
+        "samples": 1776,
+        "ratio": 0.4698,
+        "imbalance_factor": 2.13
+      },
+      "virus": {
+        "samples": 958,
+        "ratio": 0.2534,
+        "imbalance_factor": 3.95
+      },
+      "COVID-19": {
+        "samples": 37,
+        "ratio": 0.0098,
+        "imbalance_factor": 102.16
+      }
+    }
+  },
+  "file_info": {
+    "total_files": 5908,
+    "extensions": {
+      "jpeg": 5878,
+      "png": 8,
+      "jpg": 22
+    },
+    "numeric_names": 5908
+  },
+  "suggested_weights": {
+    "inverse_frequency": {
+      "normal": 1.76,
+      "bacteria": 1.0,
+      "virus": 1.85,
+      "COVID-19": 48.0
+    },
+    "sqrt_inverse_frequency": {
+      "normal": 1.33,
+      "bacteria": 1.0,
+      "virus": 1.36,
+      "COVID-19": 6.93
+    },
+    "effective_samples": {
+      "normal": 25.9876,
+      "bacteria": 44.0603,
+      "virus": 24.736,
+      "COVID-19": 1.0
+    }
+  },
+  "data_quality": {
+    "duplicates": {
+      "train": 0,
+      "val": 0,
+      "test": 0
+    },
+    "data_leakage": {
+      "train_val_overlap": 0,
+      "train_test_overlap": 0,
+      "val_test_overlap": 0
+    }
+  }
+}
