@@ -6,13 +6,18 @@ Enhanced training script with Stage 1 optimizations:
 - Stochastic Weight Averaging (SWA)
 - Advanced data augmentation
 """
-import os, math, argparse, torch, numpy as np, torch.nn as nn, torch.optim as optim
+import os, math, argparse, torch, numpy as np, torch.nn as nn, torch.optim as optim, sys
+from pathlib import Path
 from sklearn.metrics import f1_score
 from torchvision import models
-from .data import make_loader
-from .losses import LabelSmoothingCE, FocalLoss, ImprovedFocalLoss
-from .aug import mixup_data, cutmix_data
-from .utils import load_config, seed_everything, set_perf_flags, get_amp_dtype
+
+# Add src to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from data import make_loader
+from losses import LabelSmoothingCE, FocalLoss, ImprovedFocalLoss
+from aug import mixup_data, cutmix_data
+from utils import load_config, seed_everything, set_perf_flags, get_amp_dtype
 
 def build_model(name: str, num_classes: int):
     """Build model with support for ConvNeXt variants"""
@@ -42,6 +47,9 @@ def build_model(name: str, num_classes: int):
         m.classifier[1] = nn.Linear(m.classifier[1].in_features, num_classes)
     elif name == "efficientnet_v2_s":
         m = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.DEFAULT)
+        m.classifier[1] = nn.Linear(m.classifier[1].in_features, num_classes)
+    elif name == "efficientnet_v2_l":
+        m = models.efficientnet_v2_l(weights=models.EfficientNet_V2_L_Weights.DEFAULT)
         m.classifier[1] = nn.Linear(m.classifier[1].in_features, num_classes)
     elif name == "convnext_tiny":
         m = models.convnext_tiny(weights=models.ConvNeXt_Tiny_Weights.DEFAULT)
@@ -82,6 +90,30 @@ def build_model(name: str, num_classes: int):
     elif name == "regnet_y_8gf":
         m = models.regnet_y_8gf(weights=models.RegNet_Y_8GF_Weights.DEFAULT)
         m.fc = nn.Linear(m.fc.in_features, num_classes)
+    elif name.startswith('dinov2_'):
+        # DINOv2 support via transformers
+        try:
+            from transformers import AutoImageProcessor, Dinov2ForImageClassification
+        except ImportError:
+            raise ImportError("transformers is required for DINOv2. Install with: pip install transformers")
+
+        # DINOv2 model mapping
+        dinov2_models = {
+            'dinov2_small': 'facebook/dinov2-small',
+            'dinov2_base': 'facebook/dinov2-base',
+            'dinov2_large': 'facebook/dinov2-large',
+            'dinov2_giant': 'facebook/dinov2-giant'
+        }
+
+        if name not in dinov2_models:
+            raise ValueError(f"Unknown DINOv2 variant: {name}. Available: {list(dinov2_models.keys())}")
+
+        model_name = dinov2_models[name]
+        m = Dinov2ForImageClassification.from_pretrained(
+            model_name,
+            num_labels=num_classes,
+            ignore_mismatched_sizes=True
+        )
     elif name.startswith('vit_') or name.startswith('swin_') or name.startswith('deit_'):
         # Vision Transformer and Swin Transformer support via timm
         try:

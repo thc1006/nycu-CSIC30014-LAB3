@@ -1,7 +1,12 @@
 import os, pandas as pd, numpy as np, torch
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from PIL import Image
-from .aug import build_transforms
+
+# Support both relative and absolute imports
+try:
+    from .aug import build_transforms
+except ImportError:
+    from aug import build_transforms
 
 class CSVDataset(Dataset):
     def __init__(self, csv_path, images_dir, file_col, label_cols, img_size=224, augment=True, advanced_aug=False, aug_config=None, medical_preprocessing=False, preprocessing_preset='default'):

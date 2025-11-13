@@ -1,0 +1,65 @@
+# Stage 2: NIH 預訓練模型微調配置
+# 基於 Kaggle 冠軍策略 - 正確版本
+
+# 模型配置
+model: efficientnet_v2_s  # ✅ 匹配 NIH 預訓練架構
+img_size: 384
+num_classes: 4
+dropout: 0.3
+
+# NIH 預訓練檢查點 - 現在架構匹配！
+pretrained_checkpoint: outputs/pretrain_nih_stage1/best.pt
+
+# 微調策略
+freeze_layers: 0.7  # 凍結前 70% 的層
+unfreeze_epoch: 15  # 第 15 epoch 解凍所有層
+
+# 訓練配置
+epochs: 30
+batch_size: 16  # 降低以避免 OOM (EfficientNet-V2-L 很大)
+num_workers: 8
+
+# 優化器
+optimizer: adamw
+lr: 0.0001  # 比從零訓練低 5-10×
+weight_decay: 0.0001
+warmup_epochs: 3
+
+# 學習率調度
+scheduler: cosine
+min_lr: 0.000001
+
+# Loss
+loss_type: improved_focal
+focal_alpha: [1.0, 1.5, 2.0, 12.0]  # COVID-19 權重
+focal_gamma: 3.5
+label_smoothing: 0.1
+
+# 數據增強（微調時較輕）
+mixup_prob: 0.4
+mixup_alpha: 1.0
+cutmix_prob: 0.4
+cutmix_alpha: 1.0
+
+# 圖像增強
+aug_rotation: 15
+aug_scale: [0.9, 1.1]
+random_erasing_prob: 0.2
+
+# 正則化
+use_swa: true
+swa_start_epoch: 20
+swa_lr: 0.00005
+
+# 早停
+early_stopping: true
+patience: 10
+
+# 輸出
+output_dir: outputs/stage2_finetune
+save_best: true
+
+# 數據路徑 - 使用 K-Fold Split
+fold: 0
+kfold_csv_dir: data/kfold_splits
+data_dir: .  # K-Fold CSVs 包含 source_dir 欄位

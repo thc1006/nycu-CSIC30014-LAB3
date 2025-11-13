@@ -1,0 +1,67 @@
+# Swin Transformer Large Configuration for 91+ Breakthrough
+# Hierarchical Vision Transformer
+
+# Model
+model: swin_large_patch4_window7_224  # Will finetune to 384
+img_size: 384  # Swin works well at this size
+num_classes: 4
+
+# Training
+epochs: 50
+batch_size: 14  # Large transformer
+lr: 0.00005
+optimizer: adamw
+weight_decay: 0.00025
+
+# Loss
+loss: improved_focal
+focal_alpha: [1.0, 1.5, 2.0, 12.0]
+focal_gamma: 3.5
+label_smoothing: 0.12
+
+# Scheduler
+scheduler: cosine
+warmup_epochs: 5  # Longer warmup for Swin
+min_lr: 0.0000005
+
+# Regularization
+dropout: 0.3
+attention_dropout: 0.1
+drop_path_rate: 0.3  # Important for Swin
+
+# Data Augmentation
+mixup_prob: 0.6
+mixup_alpha: 1.2
+cutmix_prob: 0.5
+cutmix_alpha: 1.0
+
+# Geometric augmentation
+aug_rotation: 15
+aug_translate: 0.1
+aug_scale: [0.9, 1.1]
+aug_hflip: true
+aug_vflip: false
+
+# Advanced augmentation
+random_erasing_prob: 0.3
+random_erasing_scale: [0.02, 0.2]
+color_jitter: 0.2
+gaussian_blur_prob: 0.1
+
+# SWA
+use_swa: true
+swa_start_epoch: 40
+swa_lr: 0.00002
+
+# Early stopping
+patience: 15
+min_delta: 0.0001
+
+# Output
+output_dir: outputs/swin_large_breakthrough
+save_best_only: true
+
+# GPU Optimization
+mixed_precision: true
+cudnn_benchmark: true
+gradient_checkpointing: true  # Save memory for large model

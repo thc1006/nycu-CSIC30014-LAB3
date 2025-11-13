@@ -27,6 +27,14 @@ data/*.png
 # Grid search submissions (100+ CSV files)
 data/grid_search_submissions/
 
+# Champion submissions and other generated data
+data/champion_submissions/
+data/kfold_splits/
+data/external/
+data/pseudo_labels*/
+data/*_augmented.csv
+data/*_with_pseudo.csv
+
 # BUT include these small metadata CSVs
 !data/train_data.csv
 !data/val_data.csv
@@ -71,9 +79,17 @@ lab3_colab.ipynb
 # Temporary files
 *.log
 *.tmp
+*.pid
 training_log.txt
 confusion_matrix.png
 nohup.out
+
+# Log directories
+logs/
+
+# Model checkpoints (already covered by *.pt but being explicit)
+models/
+checkpoints/
 
 # Dependency version files (pip output artifacts)
 =1.24.0
@@ -96,3 +112,27 @@ NYCU_LAB1_Ensemble_QuickFix_95.ipynb
 # *_test.py
 # *_backup.py
 # *_old.py
+
+# Temporary config directories
+temp_configs_*/
+
+# Quick status and monitoring scripts (temporary utilities)
+QUICK_STATUS.sh
+CHECK_DISCONNECT_SAFE.sh
+MONITOR_*.sh
+SIMPLE_GPU_TASK.sh
+MAXIMIZE_GPU.sh
+
+# Temporary markdown docs (strategy notes, not final documentation)
+EMERGENCY_*.md
+QUICKSTART_*.txt
+FOR_NEXT_CLAUDE.md
+RESUME_*.md
+
+# Temporary pipeline scripts (superseded by final versions)
+FAST_*.sh
+RUN_*_BACKGROUND.sh
+START_*_TRAINING*.sh
+SUBMIT_*.sh
+ULTIMATE_*_NOW.py
+*_PIPELINE.py

@@ -2,7 +2,12 @@ import os, argparse, pandas as pd, numpy as np, torch
 from torchvision import models
 from torch.utils.data import DataLoader, Dataset
 from PIL import Image
-from .utils import load_config
+
+# Support both relative and absolute imports
+try:
+    from .utils import load_config
+except ImportError:
+    from utils import load_config
 
 def ensure_test_csv(cfg):
     data = cfg["data"]
@@ -94,6 +99,79 @@ def main(args):
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     df.to_csv(out_path, index=False)
     print("Saved submission to", out_path)
+
+def predict_and_save(checkpoint, test_csv, test_dir, output_csv, img_size=384, batch_size=32, num_classes=4):
+    """
+    直接预测函数，供 Pipeline 调用
+    Args:
+        checkpoint: 模型检查点路径
+        test_csv: 测试集 CSV 文件
+        test_dir: 测试图像目录
+        output_csv: 输出 CSV 路径
+        img_size: 图像尺寸
+        batch_size: 批次大小
+        num_classes: 类别数量
+    """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # 创建测试数据集
+    ts = TestSet(test_csv, test_dir, 'new_filename', img_size)
+    tl = DataLoader(ts, batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
+
+    # 加载模型
+    state = torch.load(checkpoint, map_location=device)
+
+    # 从 config 或 checkpoint 文件名推断模型类型
+    if 'config' in state and isinstance(state['config'], dict):
+        if 'model' in state['config']:
+            # 扁平的 config 结构
+            if isinstance(state['config']['model'], str):
+                model_name = state['config']['model']
+            else:
+                model_name = state['config']['model'].get('name', 'efficientnet_v2_s')
+        else:
+            model_name = 'efficientnet_v2_s'
+    else:
+        model_name = state.get('model_name', 'efficientnet_v2_s')
+
+    # 支持更多模型
+    from torch import nn
+    if 'efficientnet_v2_l' in model_name or 'efficientnet_v2_l' in str(checkpoint):
+        model = models.efficientnet_v2_l(weights=None)
+        model.classifier[1] = nn.Linear(model.classifier[1].in_features, num_classes)
+    elif 'efficientnet_v2_m' in model_name or 'efficientnet_v2_m' in str(checkpoint):
+        model = models.efficientnet_v2_m(weights=None)
+        model.classifier[1] = nn.Linear(model.classifier[1].in_features, num_classes)
+    else:
+        model = build_model(model_name, num_classes)
+
+    # 支持不同的 checkpoint 格式
+    if "model_state_dict" in state:
+        model.load_state_dict(state["model_state_dict"])
+    elif "model" in state:
+        model.load_state_dict(state["model"])
+    else:
+        # 直接加载 state dict
+        model.load_state_dict(state)
+
+    model = model.to(device)
+    print(f"✅ Loaded checkpoint: {checkpoint}")
+
+    # 预测
+    logits, names = predict_logits(model, tl, device)
+    probs = torch.softmax(torch.from_numpy(logits), dim=1).numpy()
+    pred_idx = probs.argmax(axis=1)
+    one_hot = np.zeros_like(probs)
+    one_hot[np.arange(one_hot.shape[0]), pred_idx] = 1
+
+    # 保存结果
+    df = pd.DataFrame(one_hot, columns=['Normal', 'Bacteria', 'Virus', 'COVID-19'])
+    df.insert(0, 'new_filename', names)
+
+    os.makedirs(os.path.dirname(output_csv), exist_ok=True)
+    df.to_csv(output_csv, index=False)
+    print(f"✅ Saved submission to {output_csv}")
+    return output_csv
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

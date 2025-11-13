@@ -1,0 +1,68 @@
+# EfficientNet-V2-L Configuration for 91+ Breakthrough
+# Larger variant for better capacity
+
+# Model
+model: efficientnet_v2_l
+img_size: 480  # V2-L can handle larger images
+num_classes: 4
+
+# Training
+epochs: 45
+batch_size: 12  # Very large model
+lr: 0.00006
+optimizer: adamw
+weight_decay: 0.00015
+
+# Loss
+loss: improved_focal
+focal_alpha: [1.0, 1.5, 2.0, 12.0]
+focal_gamma: 3.5
+label_smoothing: 0.12
+
+# Scheduler
+scheduler: cosine
+warmup_epochs: 3
+min_lr: 0.000001
+
+# Regularization
+dropout: 0.35
+stochastic_depth: 0.3
+
+# Data Augmentation (Strong for large model)
+mixup_prob: 0.6
+mixup_alpha: 1.2
+cutmix_prob: 0.5
+cutmix_alpha: 1.0
+
+# Geometric augmentation
+aug_rotation: 18
+aug_translate: 0.12
+aug_scale: [0.88, 1.12]
+aug_hflip: true
+aug_vflip: false
+
+# Advanced augmentation
+random_erasing_prob: 0.35
+random_erasing_scale: [0.02, 0.25]
+color_jitter: 0.25
+gaussian_blur_prob: 0.15
+auto_augment: true  # RandAugment
+
+# SWA
+use_swa: true
+swa_start_epoch: 35
+swa_lr: 0.00003
+
+# Early stopping
+patience: 12
+min_delta: 0.0001
+
+# Output
+output_dir: outputs/efficientnetv2_l_breakthrough
+save_best_only: true
+
+# GPU Optimization
+mixed_precision: true
+channels_last: true
+cudnn_benchmark: true
+gradient_accumulation_steps: 2  # Effective batch = 24
