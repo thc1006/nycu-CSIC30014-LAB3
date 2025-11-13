@@ -136,19 +136,7 @@ def build_model(model_name, num_classes=4, dropout=0.3, img_size=384):
     """構建模型"""
     print(f"[Model] Building {model_name} (img_size={img_size})...")
 
-    if model_name == 'efficientnet_v2_s':
-        from torchvision import models
-        model = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.DEFAULT)
-
-        # 修改 classifier
-        in_features = model.classifier[1].in_features
-        model.classifier = nn.Sequential(
-            nn.Dropout(p=dropout, inplace=True),
-            nn.Linear(in_features, num_classes)
-        )
-        print(f"[Model] EfficientNet-V2-S loaded (params: ~21M)")
-
-    elif model_name == 'efficientnet_v2_l':
+    if model_name == 'efficientnet_v2_l':
         from torchvision import models
         model = models.efficientnet_v2_l(weights=models.EfficientNet_V2_L_Weights.DEFAULT)
 
@@ -359,53 +347,12 @@ def train_model(config_path, fold=None):
         dropout=cfg.get('dropout', 0.3),
         img_size=cfg.get('img_size', 384)
     )
-
-    # Load pretrained checkpoint if specified
-    if 'pretrained_checkpoint' in cfg and cfg['pretrained_checkpoint']:
-        pretrained_path = cfg['pretrained_checkpoint']
-        if os.path.exists(pretrained_path):
-            print(f"📥 Loading pretrained checkpoint: {pretrained_path}")
-            checkpoint = torch.load(pretrained_path, map_location='cpu')
-
-            # Handle different checkpoint formats
-            if 'model_state_dict' in checkpoint:
-                state_dict = checkpoint['model_state_dict']
-            elif 'model' in checkpoint:
-                state_dict = checkpoint['model']
-            else:
-                state_dict = checkpoint
-
-            # 過濾掉分類層（classifier），只載入特徵提取器
-            # NIH 預訓練是 14 類，但我們需要 4 類
-            filtered_state_dict = {k: v for k, v in state_dict.items() if not k.startswith('classifier')}
-
-            # Load with error handling
-            try:
-                missing, unexpected = model.load_state_dict(filtered_state_dict, strict=False)
-                print("✅ Pretrained weights loaded (feature extractor only)")
-                print(f"   Loaded: {len(filtered_state_dict)} layers")
-                print(f"   Skipped classifier: {len([k for k in state_dict.keys() if k.startswith('classifier')])} layers")
-                if missing:
-                    # 只顯示非 classifier 的 missing keys
-                    non_classifier_missing = [k for k in missing if not k.startswith('classifier')]
-                    if non_classifier_missing:
-                        print(f"   ⚠️ Missing non-classifier keys: {len(non_classifier_missing)}")
-            except Exception as e:
-                print(f"❌ Failed to load pretrained weights: {e}")
-        else:
-            print(f"⚠️ Pretrained checkpoint not found: {pretrained_path}")
-
     model = model.to(device)
 
     # Data
     if 'fold' in cfg and 'kfold_csv_dir' in cfg:
         # K-Fold data
-        if cfg.get('use_pseudo_labels', False):
-            # 使用偽標籤增強的訓練集
-            train_csv = f"data/fold{cfg['fold']}_train_with_pseudo.csv"
-            print(f"📦 使用偽標籤增強訓練集")
-        else:
-            train_csv = f"{cfg['kfold_csv_dir']}/fold{cfg['fold']}_train.csv"
+        train_csv = f"{cfg['kfold_csv_dir']}/fold{cfg['fold']}_train.csv"
         val_csv = f"{cfg['kfold_csv_dir']}/fold{cfg['fold']}_val.csv"
         images_dir = cfg.get('data_dir', 'data/train')
     else:

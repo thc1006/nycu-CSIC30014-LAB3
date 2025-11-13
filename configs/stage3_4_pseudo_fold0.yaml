@@ -1,0 +1,53 @@
+# NIH Stage 3-4: Fold 0
+model: efficientnet_v2_s
+img_size: 384
+num_classes: 4
+dropout: 0.3
+
+# 從 Stage 2 繼續訓練
+pretrained_checkpoint: outputs/nih_v2s_stage2/fold0_best.pt
+
+# K-Fold 設置
+fold: 0
+kfold_csv_dir: data/kfold_splits
+
+# 偽標籤設置
+use_pseudo_labels: true
+
+# 訓練參數
+epochs: 15
+batch_size: 16
+lr: 0.00005
+weight_decay: 0.0002
+
+# 優化器
+optimizer: adamw
+scheduler: cosine
+warmup_epochs: 2
+
+# Loss 配置
+loss_type: improved_focal
+focal_alpha: [1.0, 1.5, 2.0, 12.0]
+focal_gamma: 3.5
+label_smoothing: 0.10
+
+# 數據增強 (較保守)
+mixup_prob: 0.3
+mixup_alpha: 0.8
+cutmix_prob: 0.3
+aug_rotation: 12
+aug_scale: [0.90, 1.10]
+random_erasing_prob: 0.20
+
+# SWA
+use_swa: true
+swa_start_epoch: 10
+swa_lr: 0.00002
+
+# 早停
+patience: 8
+min_delta: 0.001
+
+# 輸出
+output_dir: outputs/nih_v2s_stage3_4
+save_best_only: true

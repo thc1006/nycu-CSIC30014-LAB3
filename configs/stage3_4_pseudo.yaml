@@ -1,0 +1,56 @@
+# NIH Stage 3-4: 使用 Stage 2 模型 + 偽標籤訓練
+# 目標: 利用測試集高置信度偽標籤進一步提升模型
+
+model: efficientnet_v2_s
+img_size: 384
+num_classes: 4
+dropout: 0.3
+
+# 從 Stage 2 最佳模型繼續訓練
+pretrained_checkpoint: null  # 將在訓練腳本中指定每個 fold
+
+# K-Fold 設置
+fold: 0
+kfold_csv_dir: data/kfold_splits
+
+# 偽標籤設置
+use_pseudo_labels: true
+pseudo_labels_csv: data/pseudo_labels_nih/high_conf.csv
+
+# 訓練參數
+epochs: 15  # Stage 3-4 較短的 epoch (微調)
+batch_size: 16
+lr: 0.00005  # 較低學習率 (微調)
+weight_decay: 0.0002
+
+# 優化器
+optimizer: adamw
+scheduler: cosine
+warmup_epochs: 2
+
+# Loss 配置
+loss_type: improved_focal
+focal_alpha: [1.0, 1.5, 2.0, 12.0]
+focal_gamma: 3.5
+label_smoothing: 0.10
+
+# 數據增強 (較保守，保護偽標籤)
+mixup_prob: 0.3  # 降低 (偽標籤不適合太激進的 mixup)
+mixup_alpha: 0.8
+cutmix_prob: 0.3
+aug_rotation: 12
+aug_scale: [0.90, 1.10]
+random_erasing_prob: 0.20
+
+# SWA
+use_swa: true
+swa_start_epoch: 10
+swa_lr: 0.00002
+
+# 早停
+patience: 8
+min_delta: 0.001
+
+# 輸出
+output_dir: outputs/nih_v2s_stage3_4
+save_best_only: true

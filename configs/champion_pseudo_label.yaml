@@ -1,0 +1,55 @@
+# 第1名風格：偽標籤訓練配置
+# Champion-style pseudo-label training config
+
+# 繼承自最佳配置
+inherit_from: configs/improved_breakthrough.yaml
+
+data:
+  train_csv: data/train_data_ultra_augmented_fixed.csv  # 使用偽標籤擴充數據
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  images_dir: data/train
+  images_dir_train: data/train
+  images_dir_test: data/test_images
+  test_csv: data/sample_submission.csv
+  num_classes: 4
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+
+model:
+  name: efficientnet_v2_s  # 使用與 improved_breakthrough 相同的模型
+  img_size: 384
+  dropout: 0.25
+
+train:
+  epochs: 25  # 減少 epochs（偽標籤訓練不需要太多）
+  batch_size: 24
+  lr: 0.00003  # 降低學習率（微調偽標籤數據）
+  optimizer: adamw
+  weight_decay: 0.0002  # 增加正則化
+  patience: 10
+  seed: 42
+  num_workers: 4
+  use_amp: true
+  use_compile: false  # 避免兼容性問題
+
+# 數據增強 - 保持與 improved_breakthrough 一致
+augmentation:
+  mixup_prob: 0.6
+  mixup_alpha: 1.2
+  cutmix_prob: 0.5
+  aug_rotation: 18
+  aug_scale: [0.88, 1.12]
+  random_erasing_prob: 0.35
+
+# Loss - 保持一致
+loss:
+  type: improved_focal
+  focal_alpha: [1.0, 1.5, 2.0, 12.0]
+  focal_gamma: 3.5
+  label_smoothing: 0.12
+
+# 輸出
+out:
+  output_dir: outputs/champion_pseudo_stage1
+  submission_path: data/submission_champion_pseudo_stage1.csv
