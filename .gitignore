@@ -73,9 +73,6 @@ Thumbs.db
 kaggle.json
 lab3_colab.ipynb
 
-# Claude AI instructions (local only)
-.claude/
-
 # Temporary files
 *.log
 *.tmp
@@ -136,3 +133,27 @@ START_*_TRAINING*.sh
 SUBMIT_*.sh
 ULTIMATE_*_NOW.py
 *_PIPELINE.py
+
+# Archive directory (54 GB - all historical files)
+archive/
+
+# Kaggle credentials (machine-specific)
+kaggle*.json
+
+# Data directories (from root - should be in data/)
+test_images/
+train_images/
+val_images/
+*_data.csv
+*_data_with_pseudo.csv
+
+# Additional submission directories
+data/submissions/others/
+data/test_predictions*/
+
+# NIH external dataset
+data/nih_*/
+
+# Old README and planning docs (superseded)
+PROJECT_CLEANUP_PLAN.md
+BREAKTHROUGH_STRATEGY_ANALYSIS.md

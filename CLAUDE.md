@@ -1,6 +1,6 @@
 # 胸部 X 光分類項目 - 深度醫學影像分析記錄
 
-**最後更新**: 2025-11-15
+**最後更新**: 2025-11-16
 **項目目標**: ~~突破 82% Macro-F1，達到 85-90%+~~ ✅ **已達成並超越！** → **新目標：突破 90%！**
 
 ---
@@ -32,7 +32,7 @@
 | 11-14 | Super Ensemble Fixed | N/A | 87.570% | N/A | ✅ 極佳 |
 | 11-15 | V2-L 512 TTA (5-Fold) | N/A | 85.092% | N/A | ❌ **失敗（水平翻轉有害）** |
 | 11-15 | Super TTA+Hybrid (50-50) | N/A | 85.092% | N/A | ❌ **失敗（-2.482%）** |
-| 11-15 | **🔥 Gen2 訓練 (532 偽標籤)** | **待定** | **訓練中** | **N/A** | 🔄 **預期 89-90%** |
+| 11-15 | **❌ Gen2 訓練 (532 偽標籤)** | **84.62%** | **81.733%** | **-2.89%** | ❌ **災難性失敗（-5.841%）** |
 
 **🎉🎉🎉 最新突破**: **87.574%** - Hybrid Adaptive Ensemble！
 
@@ -41,17 +41,50 @@
 - ✅ **醫學影像 TTA 正確方法**: 僅使用小角度旋轉 (±2-3°)、亮度調整、小幅縮放 (0.95-1.05x)
 - 📚 **研究證據**: "Horizontal flip produces non-physiologic images (heart in right thorax), NOT RECOMMENDED"
 
-**🚀🚀🚀 當前策略 (11-15 16:45)**:
+**❌❌❌ Gen2 偽標籤失敗分析 (11-16)**:
+- ❌ **固定閾值問題**: 所有類別統一 0.95 閾值 → 頭部類別主導，尾部類別樣本不足
+- ❌ **偽標籤噪聲**: 532 × 12.426% 錯誤率 ≈ 66 個錯誤標籤 → 污染訓練集
+- ❌ **測試集分布偏移**: 直接在測試集生成偽標籤 → 引入測試集特有噪聲模式
+- ❌ **缺乏質量控制**: 沒有置信度評分、沒有噪聲檢測、沒有標籤清理
+- ❌ **Fold 間方差過大**: Fold 0 (87.80%) vs Fold 2/4 (82.4%) → 偽標籤質量不一致
+- 📚 **文獻證據**: "初始網絡訓練不足 → 錯誤偽標籤 → 網絡不穩定"（PMC 2024）
 
-### Gen2 迭代訓練（進行中）
-- 🔥 **Gen2**: 532 個高質量偽標籤 (平均置信度 0.9861)
-  - 預計時間: 7-8 小時 (5-Fold × ~90 分鐘/fold)
-  - 預期驗證 F1: 88.5-89.5%
-  - 預期測試 F1: **89.0-90.0%** 🎯
-  - 狀態: ✅ **訓練中** (Fold 0 Epoch 4/50, Val F1 47.36%, GPU 99%)
-  - 預計完成: 今晚 23:00-00:00
+**🚀🚀🚀 新突破策略 (11-16 基於 10+ 篇頂級論文)**:
 
-### Gen3 自適應策略（準備就緒）
+### 完整研究報告
+詳見 **`BREAKTHROUGH_STRATEGY_ANALYSIS.md`** - 基於 2024 最新文獻的 8 大突破方向
+
+**核心發現**:
+1. ⭐⭐⭐⭐⭐ **DINOv2 Foundation Model** (Nature Comm. 2024)
+   - 142M 影像預訓練，Few-shot 超越所有方法
+   - RAD-DINO 胸部 X 光專用模型可用
+   - 預期提升: **+2-4%**
+
+2. ⭐⭐⭐⭐⭐ **類別自適應偽標籤 (CAPR)** (Multiple 2024)
+   - 直接解決 Gen2 失敗原因
+   - 動態調整每類閾值，緩解頭部類別主導
+   - 預期提升: **+2-3%**
+
+3. ⭐⭐⭐⭐⭐ **對比學習 + 偽標籤引導** (DSRPGC Nov 2024)
+   - ISIC2018 僅 20% 數據達 93.16% 準確率
+   - 預期提升: **+1.5-2.5%**
+
+4. ⭐⭐⭐⭐ **ConvNeXt V2 @ 512px** (MICCAI 2024)
+   - 局部特徵捕獲卓越
+   - 預期提升: **+0.5-1.5%**
+
+5. ⭐⭐⭐⭐ **Cleanlab 自動標籤清理** (Nature 2024)
+   - 6 輪清理提升標籤準確率 3-63%
+   - 預期提升: **+0.5-1.0%**
+
+**推薦方案**:
+- **方案 A (激進突破)**: DINOv2 + ConvNeXt V2 + 對比學習 + CAPR → 目標 **91-92%** (成功率 60-70%)
+- **方案 B (穩健突破)**: ConvNeXt V2 + CAPR + Cleanlab → 目標 **89.5-90.5%** (成功率 75-85%) ✅ **推薦**
+- **方案 C (快速驗證)**: 當前架構 + CAPR 修復 → 目標 **88.5-89.5%** (成功率 90%+)
+
+**立即行動**: 實現 CAPR 偽標籤生成器 + 快速驗證 Fold 0 → 決策 Go/No-Go
+
+---
 - ✅ **Gen3 配置已完成**: `configs/efficientnet_v2l_512_gen3.yaml`
   - 自適應閾值: Normal(0.92) Bacteria(0.90) Virus(0.85) COVID-19(0.80)
   - 預期偽標籤: 800-900 個 (vs Gen2 532)
@@ -730,5 +763,388 @@ ensemble = 0.55 × NIH_Stage_4 + 0.45 × Champion_Balanced
 - NIH Stage 4 模型: `outputs/nih_v2s_stage3_4/`
 - 偽標籤數據: `data/pseudo_labels_nih/high_conf.csv`
 - 訓練日誌: `logs/stage3_4/`
+
+---
+
+## 📁 資料來源與文件位置 (機器遷移完整指南)
+
+**最後更新**: 2025-11-16
+**目的**: 新機器快速定位所有關鍵資源
+
+### 1. 數據文件 (必須單獨下載，不在 Git 中)
+
+#### 影像數據集 (約 3-4 GB，未版本控制)
+```
+data/train_images/       # 訓練影像 2,718 張
+data/val_images/         # 驗證影像 679 張
+data/test_images/        # 測試影像 1,182 張
+```
+
+**獲取方式**:
+- Kaggle 競賽數據集: `kaggle competitions download -c cxr-multi-label-classification`
+- 解壓後將 train/val/test 圖片目錄放入 `data/` 下
+
+#### 核心 CSV 文件 (在 Git 倉庫中)
+```
+data/train_data.csv      # 訓練標籤 (2,718 行)
+data/val_data.csv        # 驗證標籤 (679 行)
+data/test_data_sample.csv # 測試樣本列表 (1,182 行)
+```
+
+#### K-Fold 分割數據 (5-Fold CV)
+```
+data/fold_0.csv          # Fold 0 分割 (~680 驗證樣本)
+data/fold_1.csv          # Fold 1 分割
+data/fold_2.csv          # Fold 2 分割
+data/fold_3.csv          # Fold 3 分割
+data/fold_4.csv          # Fold 4 分割
+```
+
+**用途**: 5-Fold Cross Validation 訓練
+
+#### 偽標籤數據 (不在 Git 中)
+```
+data/pseudo_labels_nih/high_conf.csv              # NIH Stage 4 高置信度偽標籤 (562 樣本)
+data/pseudo_labels_aggressive_0.80.csv            # 激進閾值偽標籤
+data/train_data_with_pseudo.csv                   # 訓練集 + 偽標籤合併
+```
+
+**獲取方式**: 需要重新訓練模型生成（見「偽標籤生成」章節）
+
+---
+
+### 2. 最佳提交結果 (在 Git 倉庫中)
+
+所有頂級提交已備份到 `data/submissions/best/` 目錄：
+
+| 文件名 | 測試 F1 | 說明 |
+|--------|---------|------|
+| `01_hybrid_adaptive_87.574.csv` | **87.574%** | 🥇 當前最佳！Confidence + Class-specific + 1065 偽標籤 |
+| `02_adaptive_confidence_86.683.csv` | 86.683% | 🥈 置信度動態加權 |
+| `03_class_specific_86.638.csv` | 86.638% | 🥉 類別特定權重優化 |
+| `04_champion_arch_85.800.csv` | 85.800% | 10 大模型架構集成（Transformer 為主） |
+| `05_champion_balanced_84.423.csv` | 84.423% | 三層 Stacking (50% Meta + 30% Grid + 20% Base) |
+| `06_ensemble_017_84.19.csv` | 84.190% | Grid Search 優化集成 |
+
+**使用方式**: 可直接提交至 Kaggle 或用於集成
+
+**原始位置** (已歸檔):
+- `data/submission_hybrid_adaptive.csv`
+- `data/submission_adaptive_confidence.csv`
+- `data/grid_search_submissions/ensemble_017.csv`
+- `data/champion_submissions/champion_balanced.csv`
+
+---
+
+### 3. 模型檢查點 (不在 Git 中，需重新訓練)
+
+#### 當前訓練中 (DINOv2 - 目標 90%+)
+```
+outputs/dinov2_breakthrough/
+├── fold_0/
+│   ├── best.pt          # Fold 0 最佳權重 (訓練中...)
+│   ├── last.pt          # 最後一個 epoch
+│   └── config.yaml      # 訓練配置快照
+├── fold_1/ ... fold_4/  # 其他 4 個 fold
+└── ensemble_prediction.csv  # 5-Fold 集成預測（訓練完成後）
+```
+
+**訓練狀態**: 背景運行中（8-10 小時）
+**監控日誌**: `tail -f logs/dinov2_full_training.log`
+**預期分數**: 89.5-90.5% Test F1
+
+#### 歷史最佳模型 (已歸檔到 archive/)
+```
+outputs/final_optimized/fold{0-4}/best.pt  # 5-Fold CV 最佳模型 (Val F1: 85.06%)
+outputs/improved_breakthrough/best.pt      # Improved Breakthrough (83.90%)
+outputs/nih_v2s_stage3_4/fold*/best.pt     # NIH Stage 4 模型 (Val F1: 88.35%)
+```
+
+**注意**: 模型檢查點文件 (*.pt) 約 2 GB，已被 `.gitignore` 排除
+
+---
+
+### 4. 訓練配置文件 (在 Git 倉庫中)
+
+#### 最佳配置 (configs/best/)
+```
+configs/best/improved_breakthrough.yaml           # 🥇 最佳單一模型 (83.90%)
+  - Model: EfficientNet-V2-S
+  - Image Size: 384px
+  - Epochs: 45
+  - Key: 移除醫學預處理 + 強化 Mixup/CutMix
+
+configs/best/breakthrough_training.yaml           # 原始突破配置
+configs/best/efficientnet_v2l_512_breakthrough.yaml  # V2-L 大型模型 @ 512px
+```
+
+#### DINOv2 配置 (configs/dinov2/)
+```
+configs/dinov2/dinov2_breakthrough.yaml           # DINOv2 突破訓練配置
+  - Model: vit_base_patch14_dinov2.lvd142m
+  - Parameters: 86.6M
+  - Image Size: 518px (DINOv2 標準)
+```
+
+#### 歷史配置 (configs/archived/)
+```
+configs/archived/                                 # 所有實驗性配置已歸檔
+```
+
+---
+
+### 5. 訓練與預測腳本 (在 Git 倉庫中)
+
+#### 根目錄主要腳本
+```
+train_breakthrough.py                  # 最佳單一模型訓練 (83.90%)
+train_dinov2_breakthrough.py           # DINOv2 訓練 (目標 90%+)
+train_champion_models.py               # 大型模型集成訓練
+```
+
+**快速使用**:
+```bash
+# 訓練最佳單一模型
+python train_breakthrough.py --config configs/best/improved_breakthrough.yaml
+
+# 訓練 DINOv2 (單個 fold)
+python train_dinov2_breakthrough.py --fold 0 --epochs 35 --batch_size 6
+
+# 訓練 5-Fold 大型模型
+python train_champion_models.py --config configs/best/efficientnet_v2l_512_breakthrough.yaml
+```
+
+#### 組織好的腳本 (scripts/)
+```
+scripts/
+├── train/                             # 訓練相關腳本
+│   └── (已歸檔的訓練輔助腳本)
+├── predict/                           # 預測生成腳本
+│   ├── generate_v2l_predictions.py   # V2-L 模型預測
+│   └── generate_dinov2_predictions.py # DINOv2 集成預測
+└── ensemble/                          # 集成腳本
+    ├── ensemble_champion_models.py   # Champion 模型集成
+    ├── generate_champion_predictions.py
+    └── generate_pseudo_labels_from_folds.py  # 偽標籤生成
+```
+
+---
+
+### 6. 日誌與輸出 (不在 Git 中)
+
+#### 當前訓練日誌
+```
+logs/dinov2_full_training.log          # DINOv2 主日誌（實時更新）
+logs/dinov2_breakthrough/fold*.log     # 每個 fold 的詳細日誌
+```
+
+**監控命令**:
+```bash
+# 查看 DINOv2 訓練進度
+tail -f logs/dinov2_full_training.log
+
+# 查看當前 fold 詳細輸出
+tail -f logs/dinov2_breakthrough/fold_0.log
+
+# 檢查訓練進程是否運行
+ps aux | grep dinov2
+```
+
+#### 歷史日誌 (已歸檔)
+```
+archive/old_logs/                      # 所有舊訓練日誌
+```
+
+---
+
+### 7. Kaggle API 配置 (不在 Git 中，需手動配置)
+
+#### Kaggle 憑證文件
+```
+kaggle.json                            # Kaggle API 憑證 (已被 .gitignore)
+kaggle1.json                           # 備用憑證 (已被 .gitignore)
+```
+
+**新機器設置步驟**:
+1. 從 Kaggle 帳戶下載 `kaggle.json`
+2. 複製到專案根目錄
+3. 設置權限: `chmod 600 kaggle.json`
+4. 測試連接: `kaggle competitions list`
+
+**提交命令**:
+```bash
+# 提交至 Kaggle 競賽
+kaggle competitions submit -c cxr-multi-label-classification \
+    -f data/submissions/best/01_hybrid_adaptive_87.574.csv \
+    -m "Best submission - Hybrid Adaptive 87.574%"
+```
+
+---
+
+### 8. 項目結構總覽
+
+```
+nycu-CSIC30014-LAB3/
+├── CLAUDE.md                          # 📖 本文件 - 項目完整記憶
+├── README.md                          # 🚀 快速啟動指南
+│
+├── data/                              # 數據目錄 (4.9 GB)
+│   ├── submissions/best/              # ⭐ 前 6 名提交 CSV
+│   ├── train_images/                  # 訓練影像 (NOT in Git)
+│   ├── val_images/                    # 驗證影像 (NOT in Git)
+│   ├── test_images/                   # 測試影像 (NOT in Git)
+│   ├── fold_*.csv                     # 5-Fold 分割 (in Git)
+│   ├── train_data.csv                 # 訓練標籤 (in Git)
+│   └── val_data.csv                   # 驗證標籤 (in Git)
+│
+├── outputs/                           # 訓練輸出 (2.0 GB, NOT in Git)
+│   ├── dinov2_breakthrough/           # 🔥 當前 DINOv2 訓練
+│   └── best_models/                   # 預留最佳模型目錄
+│
+├── configs/                           # 配置文件 (in Git)
+│   ├── best/                          # ✅ 最佳 3 配置
+│   ├── dinov2/                        # DINOv2 配置
+│   └── archived/                      # 歷史配置
+│
+├── scripts/                           # 組織好的腳本 (in Git)
+│   ├── train/
+│   ├── predict/
+│   └── ensemble/
+│
+├── src/                               # 核心模組 (in Git)
+│   ├── data.py                        # 數據加載
+│   ├── models.py                      # 模型定義
+│   ├── losses.py                      # Loss 函數
+│   └── train_utils.py                 # 訓練工具
+│
+├── logs/                              # 日誌目錄 (8.3 MB, NOT in Git)
+│   ├── dinov2_full_training.log       # 🔥 DINOv2 主日誌
+│   └── dinov2_breakthrough/           # Per-fold 日誌
+│
+├── archive/                           # 歸檔區 (54 GB, NOT in Git)
+│   ├── old_docs/                      # 舊文檔
+│   ├── old_logs/                      # 舊日誌
+│   └── old_outputs/                   # 舊模型檢查點
+│
+├── train_breakthrough.py              # 🏆 最佳單一模型訓練腳本
+├── train_dinov2_breakthrough.py       # 🚀 DINOv2 訓練腳本
+├── train_champion_models.py           # 🔧 大型模型訓練腳本
+│
+├── kaggle.json                        # Kaggle API (NOT in Git, 需手動配置)
+├── .gitignore                         # Git 忽略規則
+└── .claudeignore                      # Claude Code 忽略規則
+```
+
+---
+
+### 9. 新機器快速啟動檢查清單
+
+#### 第一步：克隆倉庫
+```bash
+git clone <repository-url> nycu-CSIC30014-LAB3
+cd nycu-CSIC30014-LAB3
+```
+
+#### 第二步：下載數據集 (3-4 GB)
+```bash
+# 配置 Kaggle API (將 kaggle.json 放入專案根目錄)
+chmod 600 kaggle.json
+
+# 下載競賽數據
+kaggle competitions download -c cxr-multi-label-classification
+unzip cxr-multi-label-classification.zip -d data/
+
+# 確認數據結構
+ls data/train_images/ | wc -l  # 應該顯示 2718
+ls data/val_images/ | wc -l    # 應該顯示 679
+ls data/test_images/ | wc -l   # 應該顯示 1182
+```
+
+#### 第三步：安裝依賴
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+pip install timm pandas numpy Pillow tqdm scikit-learn pyyaml
+```
+
+#### 第四步：驗證環境
+```bash
+python -c "import torch; print('CUDA:', torch.cuda.is_available())"
+python -c "import timm; print('timm version:', timm.__version__)"
+```
+
+#### 第五步：查看當前訓練狀態（如果有）
+```bash
+# 檢查 DINOv2 訓練是否運行
+ps aux | grep dinov2
+
+# 查看訓練日誌
+tail -f logs/dinov2_full_training.log
+```
+
+#### 第六步：提交現有最佳結果
+```bash
+# 提交當前最佳 (87.574%)
+kaggle competitions submit -c cxr-multi-label-classification \
+    -f data/submissions/best/01_hybrid_adaptive_87.574.csv \
+    -m "Hybrid Adaptive Ensemble - 87.574%"
+```
+
+---
+
+### 10. 關鍵資源位置速查表
+
+| 資源 | 位置 | 在 Git? | 大小 |
+|------|------|---------|------|
+| **當前最佳提交** | `data/submissions/best/01_hybrid_adaptive_87.574.csv` | ✅ | 30 KB |
+| **最佳訓練腳本** | `train_breakthrough.py` | ✅ | 15 KB |
+| **最佳配置** | `configs/best/improved_breakthrough.yaml` | ✅ | 2 KB |
+| **訓練影像** | `data/train_images/` | ❌ | 1.8 GB |
+| **測試影像** | `data/test_images/` | ❌ | 800 MB |
+| **DINOv2 訓練日誌** | `logs/dinov2_full_training.log` | ❌ | 實時更新 |
+| **DINOv2 模型** | `outputs/dinov2_breakthrough/fold*/best.pt` | ❌ | ~2 GB (訓練完成後) |
+| **項目記憶** | `CLAUDE.md` | ✅ | 50 KB |
+| **快速啟動** | `README.md` | ✅ | 15 KB |
+| **歷史歸檔** | `archive/` | ❌ | 54 GB |
+
+---
+
+### 11. 故障排查
+
+#### 問題：找不到影像文件
+**解決**: 確認 `data/train_images/`, `data/val_images/`, `data/test_images/` 存在且包含影像
+
+#### 問題：CUDA out of memory
+**解決**: 降低 batch size（configs/*.yaml 中的 `batch_size` 參數）
+
+#### 問題：Kaggle API 認證失敗
+**解決**:
+1. 確認 `kaggle.json` 在專案根目錄
+2. 權限設置: `chmod 600 kaggle.json`
+3. 測試: `kaggle competitions list`
+
+#### 問題：DINOv2 訓練中斷
+**解決**:
+1. 檢查 GPU 記憶體: `nvidia-smi`
+2. 查看錯誤日誌: `tail -100 logs/dinov2_full_training.log`
+3. 重新啟動: `bash TRAIN_DINOV2_ALL_FOLDS.sh`
+
+---
+
+### 12. 下一步建議
+
+#### 如果 DINOv2 訓練完成且達到 89-90%+ ✅
+1. 立即生成預測並提交: `python scripts/predict/generate_dinov2_predictions.py`
+2. 嘗試更大的 DINOv2 模型 (Large, Giant)
+3. 與現有最佳模型集成
+
+#### 如果 DINOv2 未達標 (< 89%) ⚠️
+參考 `BREAKTHROUGH_STRATEGY_ANALYSIS.md` 中的備選方案：
+1. **CAPR 偽標籤** (+2-3%) - 類別自適應閾值
+2. **ConvNeXt V2** (+0.5-1.5%) - 新一代 CNN
+3. **對比學習** (+1.5-2.5%) - 自監督學習
+
+---
+
+**🎯 記住**: 所有最佳提交、配置和腳本都已在 Git 倉庫中，只需下載影像數據即可在新機器上立即開始工作！
 
 ---

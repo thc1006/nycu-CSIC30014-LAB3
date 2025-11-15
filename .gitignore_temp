@@ -1,0 +1,16 @@
+# 臨時排除大型輸出和數據文件
+outputs/
+data/submission_*.csv
+data/test_predictions/
+data/test_predictions_tta/
+data/pseudo_labels_*/
+data/FINAL_*.csv
+*.log
+logs/
+kaggle*.json
+
+# 保留重要的配置和腳本
+!configs/*.yaml
+!scripts/*.py
+!*.sh
+!*.md

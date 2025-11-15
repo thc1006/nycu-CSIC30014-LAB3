@@ -1,0 +1,71 @@
+# 🏆 冠軍方案：EfficientNet-V2-L @ 512×512
+# 基於 SIIM COVID-19 Detection Top 5 solutions
+# 預期分數：88.5-89.5% (單模型)，集成後 89.5-90.5%
+
+data:
+  train_csv: data/fold{fold}_train_with_pseudo.csv  # 使用偽標籤增強
+  val_csv: data/fold{fold}_val.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  images_dir_train: data/train
+  images_dir_val: data/train
+  images_dir_test: data/test_images
+  test_csv: data/sample_submission.csv
+  num_classes: 4
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+
+model:
+  name: efficientnet_v2_l  # 🔥 更大模型 (119M params vs V2-S 21M)
+  img_size: 512  # 🔥 更高解析度 (512 vs 384)
+  dropout: 0.30  # 增加 dropout 防止過擬合
+  drop_path_rate: 0.2  # Stochastic Depth
+
+train:
+  epochs: 40  # 更多 epochs 利用大模型容量
+  batch_size: 4  # 🔥 進一步降低 (V2-L @ 512 非常大)
+  lr: 0.0001  # 適中學習率
+  optimizer: adamw
+  weight_decay: 0.0002  # 強正則化
+  patience: 15  # 更大耐心
+  seed: 42
+  num_workers: 4
+  use_amp: true  # 必須用 AMP 節省記憶體
+  use_compile: false  # V2-L 可能不兼容
+  channels_last: true  # 記憶體優化
+  gradient_clip: 1.0  # 梯度裁剪
+
+# 數據增強 - 冠軍級別
+augmentation:
+  mixup_prob: 0.7  # 🔥 更激進 Mixup
+  mixup_alpha: 1.5  # 更強混合
+  cutmix_prob: 0.5
+  aug_rotation: 20  # 更大旋轉
+  aug_scale: [0.85, 1.15]  # 更寬範圍
+  random_erasing_prob: 0.4  # 更激進 erasing
+  h_flip_prob: 0.5  # 水平翻轉
+  v_flip_prob: 0.0  # 不垂直翻轉（醫學影像特性）
+
+# Loss - 優化配置
+loss:
+  type: improved_focal
+  focal_alpha: [1.0, 1.5, 2.0, 12.0]  # COVID-19 權重 12
+  focal_gamma: 3.5  # 專注困難樣本
+  label_smoothing: 0.15  # 🔥 更強 smoothing (冠軍用 0.15-0.2)
+
+# 學習率調度
+scheduler:
+  type: cosine
+  warmup_epochs: 3
+  min_lr: 0.000001
+
+# SWA - Stochastic Weight Averaging
+swa:
+  use_swa: true
+  swa_start_epoch: 30  # 最後 10 epochs
+  swa_lr: 0.00005
+
+# 輸出
+out:
+  dir: outputs/v2l_512_breakthrough/fold{fold}
+  submission_path: data/submission_v2l_512_fold{fold}.csv

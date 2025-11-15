@@ -1,40 +1,45 @@
+#!/usr/bin/env python3
+"""
+将概率预测转换为 one-hot 编码
+"""
+
 import pandas as pd
 import numpy as np
+import sys
 
-# Load probability submission
-df = pd.read_csv('data/submission_efficientnet_tta.csv')
+def convert_to_onehot(input_csv, output_csv):
+    """将概率预测转换为 one-hot"""
+    df = pd.read_csv(input_csv)
+    class_cols = ['normal', 'bacteria', 'virus', 'COVID-19']
 
-# Class names
-class_names = ['normal', 'bacteria', 'virus', 'COVID-19']
+    # Get probabilities
+    probs = df[class_cols].values
 
-# Get probabilities and convert to one-hot
-probs = df[class_names].values
-predicted_idx = probs.argmax(axis=1)
+    # Convert to one-hot
+    pred_classes = np.argmax(probs, axis=1)
+    onehot = np.zeros_like(probs, dtype=int)
+    onehot[np.arange(len(pred_classes)), pred_classes] = 1
 
-# Create one-hot encoding
-onehot = np.zeros_like(probs)
-onehot[np.arange(len(probs)), predicted_idx] = 1.0
+    # Update dataframe
+    df[class_cols] = onehot
 
-# Create submission with one-hot encoding
-submission = pd.DataFrame({
-    'new_filename': df['new_filename'],
-    'normal': onehot[:, 0],
-    'bacteria': onehot[:, 1],
-    'virus': onehot[:, 2],
-    'COVID-19': onehot[:, 3]
-})
+    # Save
+    df.to_csv(output_csv, index=False)
 
-submission.to_csv('data/submission_efficientnet_tta_onehot.csv', index=False)
-print("✅ Converted EfficientNet TTA to one-hot format")
-print(f"   File: data/submission_efficientnet_tta_onehot.csv")
-print(f"   Samples: {len(submission)}")
+    # Print stats
+    class_counts = np.bincount(pred_classes, minlength=len(class_cols))
+    print(f"✅ 转换完成: {input_csv} → {output_csv}")
+    print(f"预测分布:")
+    for i, (name, count) in enumerate(zip(class_cols, class_counts)):
+        print(f"  {name}: {count} ({count/len(df)*100:.1f}%)")
 
-# Verify format matches successful submission
-print("\nFirst 5 rows:")
-print(submission.head())
+if __name__ == "__main__":
+    files_to_convert = [
+        ("data/submission_v2l50_best50.csv", "data/submission_v2l50_best50_onehot.csv"),
+        ("data/submission_v2l60_best40.csv", "data/submission_v2l60_best40_onehot.csv"),
+        ("data/submission_v2l40_best60.csv", "data/submission_v2l40_best60_onehot.csv"),
+    ]
 
-# Print distribution
-class_counts = onehot.sum(axis=0)
-print("\nPrediction distribution:")
-for i, name in enumerate(class_names):
-    print(f"  {name:12s}: {int(class_counts[i]):4d} ({class_counts[i]/len(submission)*100:.2f}%)")
+    for input_file, output_file in files_to_convert:
+        convert_to_onehot(input_file, output_file)
+        print()

@@ -1,0 +1,84 @@
+# 🚀 CAPR: EfficientNet-V2-L @ 512 with Category-Adaptive Pseudo-labels
+# 目標：突破 90% - 使用類別自適應偽標籤修復 Gen2 失敗
+# 預期驗證 F1: 89.0-90.0%
+
+data:
+  train_csv: data/fold{fold}_train_capr.csv  # CAPR 訓練集 (含自適應偽標籤)
+  val_csv: data/fold{fold}_val.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  images_dir_train: train_images_capr  # 混合目錄（原始 + 偽標籤）
+  images_dir_val: train_images
+  images_dir_test: test_images
+  test_csv: data/test_data.csv
+  num_classes: 4
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+
+model:
+  name: efficientnet_v2_l
+  img_size: 512
+  dropout: 0.38  # ↑ 更強 dropout 防止過擬合到偽標籤
+  drop_path_rate: 0.28
+
+train:
+  epochs: 45  # 適中的 epochs
+  batch_size: 4
+  lr: 0.00007  # ↓ 降低學習率（偽標籤訓練需要更穩定）
+  optimizer: adamw
+  weight_decay: 0.00035  # ↑ 更強正則化
+  patience: 16
+  seed: 42
+  num_workers: 4
+  use_amp: true
+  use_compile: false
+  channels_last: true
+  gradient_clip: 1.0
+
+# 數據增強 - 平衡策略
+augmentation:
+  mixup_prob: 0.75
+  mixup_alpha: 1.8
+  cutmix_prob: 0.55
+  aug_rotation: 22
+  aug_scale: [0.85, 1.15]
+  random_erasing_prob: 0.40
+  h_flip_prob: 0.5
+  v_flip_prob: 0.0
+
+# Loss - 針對 CAPR 調整
+loss:
+  type: improved_focal
+  focal_alpha: [1.0, 1.5, 2.8, 18.0]  # ↑ 進一步提升 Virus 和 COVID-19 權重
+  focal_gamma: 4.2  # ↑ 更專注困難樣本
+  label_smoothing: 0.20  # ↑ 更強 smoothing（偽標籤可能有噪聲）
+
+# 學習率調度
+scheduler:
+  type: cosine
+  warmup_epochs: 5  # ↑ 更長 warmup
+  min_lr: 0.0000003
+
+# SWA
+swa:
+  use_swa: true
+  swa_start_epoch: 35  # 適中啟動
+  swa_lr: 0.000035
+
+# 輸出
+out:
+  dir: outputs/v2l_512_capr/fold{fold}
+  submission_path: data/submission_v2l_512_capr_fold{fold}.csv
+
+# CAPR 特殊配置
+capr:
+  use_adaptive_pseudo: true  # 標記使用了 CAPR 偽標籤
+  adaptive_thresholds:
+    normal: 0.92      # 簡單類別：較高閾值
+    bacteria: 0.90
+    virus: 0.85       # 困難類別：較低閾值
+    COVID-19: 0.80    # 最困難類別：最低閾值
+  quality_control: true  # 啟用質量控制
+  min_quality_score: 0.85
+  max_per_class: [150, 200, 150, 50]  # 每類最大樣本數（防止頭部主導）
+  description: "Category-Adaptive Pseudo-label Regulation with quality control"

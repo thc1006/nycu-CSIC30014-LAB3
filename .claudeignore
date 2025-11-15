@@ -1,0 +1,78 @@
+# Claude Code 忽略文件
+# 此文件告訴 Claude Code 哪些文件和目錄不需要被索引
+
+# 歸檔區 (舊文件)
+archive/
+
+# 大型輸出目錄 (模型檢查點)
+outputs/*/
+!outputs/dinov2_breakthrough/
+!outputs/best_models/
+
+# 日誌文件
+logs/*.log
+!logs/dinov2_full_training.log
+
+# Python 緩存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# 虛擬環境
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系統文件
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# 臨時文件
+*.tmp
+*.bak
+*.log
+*.cache
+
+# 大型數據文件 (僅在需要時讀取)
+data/train_images/
+data/val_images/
+data/test_images/
+data/*predictions*/
+data/test_predictions/
+data/test_predictions_tta/
+
+# 舊提交文件 (只保留 best/ 子目錄)
+data/submission*.csv
+data/ensemble*.csv
+data/champion*.csv
+data/grid_search_submissions/
+data/champion_submissions/
+!data/submissions/best/
+
+# 特定忽略
+kaggle.json
+kaggle1.json
+.env
+
+# 其他不需要索引的大型目錄
+data/pseudo_labels/
+data/nih_*/

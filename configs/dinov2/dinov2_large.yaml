@@ -1,0 +1,66 @@
+# DINOv2-Large Configuration for 91+ Breakthrough
+# Self-supervised pretrained Vision Transformer
+
+# Model
+model: dinov2_large  # Will use facebook/dinov2-large
+img_size: 448  # DINOv2 works well with larger images
+num_classes: 4
+
+# Training
+epochs: 50
+batch_size: 16  # Large model, smaller batch
+lr: 0.00005  # Lower LR for pretrained model
+optimizer: adamw
+weight_decay: 0.0002
+
+# Loss
+loss: improved_focal
+focal_alpha: [1.0, 1.5, 2.0, 12.0]  # COVID-19 weight
+focal_gamma: 3.5
+label_smoothing: 0.12
+
+# Scheduler
+scheduler: cosine
+warmup_epochs: 3
+min_lr: 0.000001
+
+# Regularization
+dropout: 0.3
+drop_path_rate: 0.2  # Stochastic depth for ViT
+
+# Data Augmentation (Conservative for pretrained model)
+mixup_prob: 0.5
+mixup_alpha: 1.0
+cutmix_prob: 0.4
+cutmix_alpha: 1.0
+
+# Geometric augmentation
+aug_rotation: 15
+aug_translate: 0.1
+aug_scale: [0.9, 1.1]
+aug_hflip: true
+aug_vflip: false
+
+# Advanced augmentation
+random_erasing_prob: 0.3
+random_erasing_scale: [0.02, 0.2]
+color_jitter: 0.2
+gaussian_blur_prob: 0.1
+
+# SWA
+use_swa: true
+swa_start_epoch: 40
+swa_lr: 0.00002
+
+# Early stopping
+patience: 15
+min_delta: 0.0001
+
+# Output
+output_dir: outputs/dinov2_large_breakthrough
+save_best_only: true
+
+# GPU Optimization
+mixed_precision: true
+channels_last: true
+cudnn_benchmark: true

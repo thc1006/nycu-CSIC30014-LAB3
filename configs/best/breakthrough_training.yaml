@@ -1,0 +1,82 @@
+# 突破 82 分的優化訓練配置
+# GPU: RTX 4070 Ti SUPER (16GB)
+# 目標: 85-87%+ Macro-F1
+
+inherits: configs/base_colab.yaml
+
+data:
+  # 使用下載的實際影像路徑
+  images_dir_train: train_images
+  images_dir_val: val_images
+  images_dir_test: test_images
+  train_csv: data/train_data.csv
+  val_csv: data/val_data.csv
+  test_csv: data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  num_classes: 4
+
+train:
+  seed: 42
+
+  # 🔥 榨乾 GPU - 長時間訓練
+  epochs: 40
+  batch_size: 20  # 16GB VRAM 可以支援
+
+  # 優化器配置
+  num_workers: 8  # 多線程加載
+  lr: 0.0001  # 較小學習率配合長訓練
+  weight_decay: 0.0001
+  optimizer: adamw
+
+  # 學習率調度
+  scheduler: cosine
+  warmup_epochs: 5  # 更長的 warmup
+
+  # 關鍵：處理極度不平衡
+  use_weighted_sampler: true
+
+  # 🎯 核心改進：高權重 Focal Loss
+  loss: improved_focal
+  focal_alpha: [1.0, 1.5, 2.0, 15.0]  # COVID-19 極高權重
+  focal_gamma: 3.0  # 更聚焦困難樣本
+  label_smoothing: 0.1
+
+  # 🔥 激進的資料增強
+  augment: true
+  advanced_aug: true
+  mixup_prob: 0.5
+  mixup_alpha: 1.0
+  cutmix_prob: 0.5
+  cutmix_alpha: 1.0
+
+  # 高級增強參數
+  aug_rotation: 15
+  aug_translate: 0.1
+  aug_scale_min: 0.9
+  aug_scale_max: 1.1
+  aug_shear: 10
+  random_erasing_prob: 0.3
+
+  # 🌟 Stochastic Weight Averaging
+  use_swa: true
+  swa_start_epoch: 30
+  swa_lr: 0.00005
+
+perf:
+  # 🚀 混合精度訓練（榨乾 GPU）
+  amp_dtype: fp16  # RTX 4070 Ti 支援
+  channels_last: true  # 記憶體優化
+  cudnn_benchmark: true  # 自動優化
+  tf32: high  # 高精度
+
+model:
+  # 🎯 使用高效能模型
+  name: efficientnet_v2_s  # 或 convnext_tiny
+  img_size: 384  # 平衡效能和準確度
+  pretrained: true
+
+out:
+  dir: outputs/breakthrough_run
+  checkpoint_path: outputs/breakthrough_run/best.pt
+  submission_path: data/submission_breakthrough.csv
