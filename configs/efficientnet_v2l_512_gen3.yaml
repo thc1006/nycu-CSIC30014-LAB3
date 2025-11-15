@@ -1,0 +1,86 @@
+# 🚀 Gen3: EfficientNet-V2-L @ 512 with Adaptive Pseudo-labeling
+# 目標：最終衝刺 90%+ - 自適應閾值 + 擴展偽標籤集
+# 預期驗證 F1: 89.0-90.0%
+# 預期測試 F1: 89.5-91.0%
+
+data:
+  train_csv: data/fold{fold}_train_gen3.csv  # Gen3 訓練集 (含自適應偽標籤)
+  val_csv: data/fold{fold}_val.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  images_dir_train: train_images  # 會使用 CSV 中的 source_dir 欄位動態切換
+  images_dir_val: train_images
+  images_dir_test: test_images
+  test_csv: data/test_data.csv
+  num_classes: 4
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+
+model:
+  name: efficientnet_v2_l
+  img_size: 512
+  dropout: 0.40  # ↑ 進一步增加 dropout (from 0.35) 應對更多偽標籤
+  drop_path_rate: 0.30  # ↑ 增加 stochastic depth
+
+train:
+  epochs: 55  # ↑ 增加 epochs (from 50) 充分利用數據
+  batch_size: 4
+  lr: 0.00007  # ↓ 更低學習率 (from 0.00008) 微調階段
+  optimizer: adamw
+  weight_decay: 0.0004  # ↑ 更強正則化 (from 0.0003)
+  patience: 20  # ↑ 更大耐心 (from 18)
+  seed: 42
+  num_workers: 4
+  use_amp: true
+  use_compile: false
+  channels_last: true
+  gradient_clip: 1.0
+
+# 數據增強 - 保守（因為偽標籤質量可能不如 Gen2）
+augmentation:
+  mixup_prob: 0.75  # ↓ 稍降低 (from 0.8) 避免過度混合
+  mixup_alpha: 1.8  # ↓ 稍降低 (from 2.0)
+  cutmix_prob: 0.55  # ↓ from 0.6
+  aug_rotation: 22  # ↓ 減少旋轉 (from 25)
+  aug_scale: [0.82, 1.18]  # ↓ 縮小範圍
+  random_erasing_prob: 0.40  # ↓ from 0.45
+  h_flip_prob: 0.5
+  v_flip_prob: 0.0
+
+# Loss - 進一步微調
+loss:
+  type: improved_focal
+  focal_alpha: [1.0, 1.3, 2.2, 12.0]  # ↓ 降低困難類別權重（偽標籤可能有噪音）
+  focal_gamma: 3.8  # ↓ 稍降低 (from 4.0)
+  label_smoothing: 0.20  # ↑ 更強 smoothing (from 0.18) 應對偽標籤噪音
+
+# 學習率調度
+scheduler:
+  type: cosine
+  warmup_epochs: 5  # ↑ 更長 warmup (from 4)
+  min_lr: 0.0000003  # ↓ 更低最小學習率
+
+# SWA
+swa:
+  use_swa: true
+  swa_start_epoch: 42  # ↑ 更晚啟動 (from 38) 確保收斂穩定
+  swa_lr: 0.000035  # ↓ 更低 SWA 學習率
+
+# 輸出
+out:
+  dir: outputs/v2l_512_gen3/fold{fold}
+  submission_path: data/submission_v2l_512_gen3_fold{fold}.csv
+
+# Gen3 特殊配置
+gen3:
+  use_adaptive_pseudo: true  # 自適應閾值策略
+  adaptive_thresholds:
+    normal: 0.92      # 簡單類別：較高閾值
+    bacteria: 0.90    # 簡單類別：較高閾值
+    virus: 0.85       # 困難類別：較低閾值
+    COVID-19: 0.80    # 最困難類別：最低閾值
+  expected_pseudo_count: 800-900  # 預期偽標籤數量
+  min_confidence_avg: 0.92  # 平均最低置信度
+  use_contrastive_loss: true  # 啟用對比學習（區分真實與偽標籤）
+  contrastive_weight: 0.1  # 對比損失權重
+  description: "Adaptive threshold pseudo-labeling with contrastive learning for final 90%+ push"

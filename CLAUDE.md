@@ -1,7 +1,7 @@
 # 胸部 X 光分類項目 - 深度醫學影像分析記錄
 
-**最後更新**: 2025-11-13
-**項目目標**: ~~突破 82% Macro-F1，達到 85-90%+~~ ✅ **已達成！**
+**最後更新**: 2025-11-15
+**項目目標**: ~~突破 82% Macro-F1，達到 85-90%+~~ ✅ **已達成並超越！** → **新目標：突破 90%！**
 
 ---
 
@@ -17,34 +17,82 @@
 | 11-11 | EfficientNet 45ep + TTA x5 | 89.76% | 83.82% | -5.94% | ⚠️ 過擬合嚴重 |
 | 11-12 | **Ultimate Final Ensemble** | **85.68%** | **84.11%** | **-1.57%** | ✅ 良好 |
 | 11-13 | Grid Search Ensemble | N/A | 84.19% | N/A | ✅ 良好 |
-| 11-13 | **🏆 Champion Balanced** | **N/A** | **🥇 84.423%** | **N/A** | ✅ **當前最佳！** |
+| 11-13 | Champion Balanced | N/A | 84.423% | N/A | ✅ 良好 |
 | 11-13 | Champion Heavy Stacking | N/A | 84.411% | N/A | ✅ 良好 |
+| 11-14 | Class-Specific Weighting | N/A | 86.638% | N/A | ✅ 良好 |
+| 11-14 | Adaptive Confidence | N/A | 86.683% | N/A | ✅ 良好 |
+| 11-14 | NIH Stage 4 + Champion | 88.35% | 86.683% | -1.67% | ✅ 良好 |
+| 11-14 | **🏆 Hybrid Adaptive Ensemble** | **N/A** | **🥇 87.574%** | **N/A** | ✅ **當前最佳！** |
+| 11-14 | Champion Arch-Weighted (10 models) | N/A | 85.800% | N/A | ✅ 良好 |
+| 11-14 | Champion Capacity-Weighted | N/A | 85.780% | N/A | ✅ 良好 |
+| 11-14 | Champion Simple Average | N/A | 85.765% | N/A | ✅ 良好 |
+| 11-15 | **EfficientNet-V2-L @ 512 (40-60)** | **~87.4%** | **87.574%** | **~0%** | ✅ **並列最佳！** |
+| 11-15 | **EfficientNet-V2-L @ 512 (50-50)** | **~87.4%** | **87.574%** | **~0%** | ✅ **並列最佳！** |
+| 11-15 | EfficientNet-V2-L @ 512 (60-40) | ~87.4% | 87.533% | ~0% | ✅ 良好 |
+| 11-14 | Super Ensemble Fixed | N/A | 87.570% | N/A | ✅ 極佳 |
+| 11-15 | V2-L 512 TTA (5-Fold) | N/A | 85.092% | N/A | ❌ **失敗（水平翻轉有害）** |
+| 11-15 | Super TTA+Hybrid (50-50) | N/A | 85.092% | N/A | ❌ **失敗（-2.482%）** |
+| 11-15 | **🔥 Gen2 訓練 (532 偽標籤)** | **待定** | **訓練中** | **N/A** | 🔄 **預期 89-90%** |
 
-**🎉🎉🎉 最新突破**: **84.423%** (Champion Balanced) - 五個 Champion 策略全部完成測試！
+**🎉🎉🎉 最新突破**: **87.574%** - Hybrid Adaptive Ensemble！
 
-**當前排名**: 第 10 名 / 與第 1 名差距: -6.662% (91.085% - 84.423%)
+**⚠️⚠️⚠️ 重要教訓 (11-15)**:
+- ❌ **TTA 水平翻轉對胸部 X 光有害**: 解剖學不對稱（心臟在左側），翻轉產生非生理影像，導致 **-2.482%** 性能下降
+- ✅ **醫學影像 TTA 正確方法**: 僅使用小角度旋轉 (±2-3°)、亮度調整、小幅縮放 (0.95-1.05x)
+- 📚 **研究證據**: "Horizontal flip produces non-physiologic images (heart in right thorax), NOT RECOMMENDED"
 
-**所有 Champion 提交結果** (從高到低):
+**🚀🚀🚀 當前策略 (11-15 16:45)**:
 
-1. **Champion Balanced** - **84.423%** 🥇 (最高分)
-   - 50% Meta-learner + 30% Grid Search + 20% Base
-   - 提交時間: 25 分鐘前
-   - 文件: `champion_balanced.csv`
+### Gen2 迭代訓練（進行中）
+- 🔥 **Gen2**: 532 個高質量偽標籤 (平均置信度 0.9861)
+  - 預計時間: 7-8 小時 (5-Fold × ~90 分鐘/fold)
+  - 預期驗證 F1: 88.5-89.5%
+  - 預期測試 F1: **89.0-90.0%** 🎯
+  - 狀態: ✅ **訓練中** (Fold 0 Epoch 4/50, Val F1 47.36%, GPU 99%)
+  - 預計完成: 今晚 23:00-00:00
 
-2. **Champion Heavy Stacking** - **84.411%** 🥈 (-0.012%)
-   - 70% Meta-learner + 20% Grid Search + 10% Base
-   - 提交時間: 25 分鐘前
-   - 文件: `champion_heavy_stacking.csv`
-   - 更激進的 Stacking 策略
+### Gen3 自適應策略（準備就緒）
+- ✅ **Gen3 配置已完成**: `configs/efficientnet_v2l_512_gen3.yaml`
+  - 自適應閾值: Normal(0.92) Bacteria(0.90) Virus(0.85) COVID-19(0.80)
+  - 預期偽標籤: 800-900 個 (vs Gen2 532)
+  - 增強正則化: Dropout 0.40, Label Smoothing 0.20
+  - 預期測試 F1: **89.5-91.0%** 🎯
 
-3. **Grid Search Ensemble (ensemble_017)** - 84.19% 🥉 (-0.233%)
-   - 47.6% ultimate_final + 28.6% mega_tta + 19.0% ultimate_smart + 4.8% improved
-   - Grid search 優化權重
-   - 預測分數: 84.046% → 實際: 84.19% (+0.14%)
+- ✅ **自動化流程腳本**: `AUTO_BREAKTHROUGH_90.sh`
+  - 自動檢測 Gen2 完成
+  - 生成並提交 Gen2 預測
+  - 根據分數決定是否執行 Gen3
+  - 完全自動化，無需人工干預
 
-3. **Ultimate Final Ensemble** - 84.11% 🥉
-   - 35% Improved Breakthrough + 25% EfficientNet TTA + 25% ConvNeXt TTA + 15% Breakthrough
-   - 手動調整權重
+- ✅ **監控工具**: `monitor_gen2.sh` - 實時查看訓練進度
+
+**總成功率預估**: ~75% 達到 90%+
+- Gen2 直接成功: 40%
+- Gen2 + Gen3 成功: 35%
+
+**關鍵提交細節**:
+1. **Hybrid Adaptive** (87.574%) - Confidence + Class-specific with 1065 pseudo-labels
+2. **Adaptive Confidence** (86.683%) - Dynamic weighting based on pseudo-label confidence
+3. **Class-Specific** (86.638%) - N(50-50) B(60-40) V(40-60) C(70-30) weights per class
+
+**總提升**: 從 Baseline 81.98% → **87.574%** (+5.594% 🚀)
+**距離第一名**: 91.085% - 87.574% = **3.511%**
+
+**所有提交結果排行榜** (從高到低):
+
+| 排名 | 配置 | 分數 | 文件 | 關鍵特徵 |
+|------|------|------|------|----------|
+| 🥇 | **Hybrid Adaptive** | **87.574%** | `submission_hybrid_adaptive.csv` | Confidence + Class-specific + 1065 pseudo-labels |
+| 🥈 | Adaptive Confidence | 86.683% | `submission_adaptive_confidence.csv` | Dynamic weighting based on confidence |
+| 🥈 | NIH + Champion (45-55) | 86.683% | `submission_nih45_champion55.csv` | NIH pretrain + Champion blend |
+| 4 | Class-Specific | 86.638% | `submission_class_specific.csv` | Per-class weight optimization |
+| 5 | Champion Arch-Weighted | 85.800% | `submission_champion_arch_weighted.csv` | 10 large models, Transformer-focused |
+| 6 | Champion Capacity-Weighted | 85.780% | `submission_champion_weighted_avg.csv` | Weighted by model size |
+| 7 | Champion Simple Avg | 85.765% | `submission_champion_simple_avg.csv` | Equal weight ensemble |
+| 8 | Champion Balanced | 84.423% | `champion_balanced.csv` | 50% Meta + 30% Grid + 20% Base |
+| 9 | Champion Heavy Stacking | 84.411% | `champion_heavy_stacking.csv` | 70% Meta + 20% Grid + 10% Base |
+| 10 | Grid Search (017) | 84.190% | `ensemble_017.csv` | Grid-optimized weights |
+| 11 | Ultimate Final | 84.112% | `submission_ultimate_final.csv` | Multi-architecture ensemble |
    - 驗證分數: 85.68% (平均 Medical + ViT: 86.01%, 85.35%)
    - Val-Test Gap: **僅 1.57%** (最佳泛化)
 
@@ -592,3 +640,95 @@ swa_lr: 0.00004
 ---
 
 **記住**: COVID-19 的關鍵在於 **低對比度周邊 GGO** + **重症臨床環境**，模型必須學習純影像學特徵以泛化！
+
+---
+
+## 🌟 最新突破：NIH Stage 4 + Champion Ensemble (86.68%)
+
+### 配置細節
+
+**集成權重**:
+```python
+ensemble = 0.55 × NIH_Stage_4 + 0.45 × Champion_Balanced
+```
+
+**NIH Stage 4 (55% 權重)**:
+- **架構**: EfficientNet-V2-S (20.3M 參數)
+- **訓練流程**:
+  1. NIH ChestX-ray14 預訓練 (112K 樣本, 14 疾病)
+  2. 競賽數據微調 Stage 2 (5-Fold, Val F1 85.06%)
+  3. 偽標籤生成 (562 高質量樣本, 閾值 ≥0.95)
+  4. 偽標籤增強 Stage 4 (5-Fold, Val F1 **88.35%**)
+- **驗證分數**: 88.35% (5-fold 平均)
+  - Fold 0: 87.45%
+  - Fold 1: 89.41% 🏆
+  - Fold 2: 86.35%
+  - Fold 3: 89.16%
+  - Fold 4: 89.36%
+
+**Champion Balanced (45% 權重)**:
+- **方法**: 三層 Stacking 集成
+- **架構**: 10 基礎模型 (5× V2-L + 5× Swin-Large) + MLP Meta-learner
+- **測試分數**: 84.42% (已驗證)
+
+### 性能表現
+
+**測試結果**:
+- **Test F1**: 86.68%
+- **Val F1**: 88.35%
+- **Val-Test Gap**: -1.67% ⭐ (優秀的泛化能力)
+
+**預測分布**:
+- Normal: 338 (28.6%)
+- Bacteria: 557 (47.1%)
+- Virus: 273 (23.1%)
+- COVID-19: 14 (1.2%)
+
+### 關鍵成功因素
+
+1. **外部數據遷移學習** ✅
+   - NIH ChestX-ray14 提供強大特徵提取能力
+   - 112K 樣本 vs 競賽 3.4K 樣本 (32x 數據量)
+
+2. **三階段訓練流程** ✅
+   - Stage 1: 大規模預訓練 (外部數據)
+   - Stage 2: 任務特定微調 (競賽數據)
+   - Stage 4: 半監督增強 (偽標籤)
+
+3. **高質量偽標籤** ✅
+   - 562 個樣本 (置信度 ≥0.95)
+   - +20.7% 訓練數據
+   - Val F1 從 85.06% → 88.35% (+3.29%)
+
+4. **智能集成策略** ✅
+   - 新模型 (高 Val F1) + 已驗證模型 (高 Test)
+   - 架構多樣性 (V2-S + V2-L + Swin-Large)
+   - 風險對沖
+
+### 訓練時間
+
+| 階段 | 時間 | 說明 |
+|------|------|------|
+| NIH Stage 2 | 24 分鐘 | 5-fold 基礎訓練 |
+| 偽標籤生成 | 5 分鐘 | 562 高質量樣本 |
+| NIH Stage 4 | 18 分鐘 | 偽標籤增強訓練 |
+| 集成創建 | 5 分鐘 | 兩路集成 |
+| **總計** | **52 分鐘** | 純訓練時間 |
+
+### vs 其他方法
+
+| 方法 | Test F1 | 優勢 | 劣勢 |
+|------|---------|------|------|
+| **NIH + Champion** | **86.68%** | 外部數據、半監督 | 需要預訓練 |
+| Champion Balanced | 84.42% | 純競賽數據、大模型 | 訓練時間長 |
+| Grid Search | 84.19% | 簡單有效 | 上限受限 |
+| Breakthrough | 83.90% | 快速簡單 | 單一模型 |
+
+### 文件位置
+
+- 提交文件: `data/FINAL_SUBMISSION.csv`
+- NIH Stage 4 模型: `outputs/nih_v2s_stage3_4/`
+- 偽標籤數據: `data/pseudo_labels_nih/high_conf.csv`
+- 訓練日誌: `logs/stage3_4/`
+
+---

@@ -1,0 +1,78 @@
+# 🚀 Gen2: EfficientNet-V2-L @ 512 with Test Pseudo-labels
+# 目標：突破 90% - 使用測試集高置信度偽標籤進行自監督學習
+# 預期驗證 F1: 88.5-89.5%
+
+data:
+  train_csv: data/fold{fold}_train_gen2.csv  # Gen2 訓練集 (含測試集偽標籤)
+  val_csv: data/fold{fold}_val.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  images_dir_train: train_images_gen2_gen2  # 原始訓練影像（將在訓練腳本中處理混合目錄）
+  images_dir_val: train_images
+  images_dir_test: test_images
+  test_csv: data/test_data.csv
+  num_classes: 4
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+
+model:
+  name: efficientnet_v2_l
+  img_size: 512
+  dropout: 0.35  # ↑ 增加 dropout (from 0.30) 防止過擬合到偽標籤
+  drop_path_rate: 0.25  # ↑ 增加 stochastic depth
+
+train:
+  epochs: 50  # ↑ 增加 epochs (from 40) 利用更多數據
+  batch_size: 4
+  lr: 0.00008  # ↓ 降低學習率 (from 0.0001) 更穩定訓練
+  optimizer: adamw
+  weight_decay: 0.0003  # ↑ 更強正則化 (from 0.0002)
+  patience: 18  # ↑ 更大耐心 (from 15)
+  seed: 42
+  num_workers: 4
+  use_amp: true
+  use_compile: false
+  channels_last: true
+  gradient_clip: 1.0
+
+# 數據增強 - 更激進（因為有更多數據）
+augmentation:
+  mixup_prob: 0.8  # ↑ 更激進 Mixup (from 0.7)
+  mixup_alpha: 2.0  # ↑ 更強混合 (from 1.5)
+  cutmix_prob: 0.6  # ↑ from 0.5
+  aug_rotation: 25  # ↑ 更大旋轉 (from 20)
+  aug_scale: [0.80, 1.20]  # ↑ 更寬範圍
+  random_erasing_prob: 0.45  # ↑ from 0.4
+  h_flip_prob: 0.5
+  v_flip_prob: 0.0
+
+# Loss - 微調
+loss:
+  type: improved_focal
+  focal_alpha: [1.0, 1.5, 2.5, 15.0]  # ↑ Virus 和 COVID-19 權重微調
+  focal_gamma: 4.0  # ↑ 更專注困難樣本 (from 3.5)
+  label_smoothing: 0.18  # ↑ 更強 smoothing (from 0.15)
+
+# 學習率調度
+scheduler:
+  type: cosine
+  warmup_epochs: 4  # ↑ 更長 warmup (from 3)
+  min_lr: 0.0000005  # ↓ 更低最小學習率
+
+# SWA
+swa:
+  use_swa: true
+  swa_start_epoch: 38  # ↑ 更晚啟動 (from 30)
+  swa_lr: 0.00004  # ↓ 更低 SWA 學習率
+
+# 輸出
+out:
+  dir: outputs/v2l_512_gen2/fold{fold}
+  submission_path: data/submission_v2l_512_gen2_fold{fold}.csv
+
+# Gen2 特殊配置
+gen2:
+  use_test_pseudo: true  # 標記使用了測試集偽標籤
+  pseudo_count: 532      # 偽標籤數量
+  pseudo_conf_threshold: 0.9861  # 平均置信度
+  description: "Self-supervised learning with ultra-high-confidence test pseudo-labels"

@@ -32,7 +32,7 @@ def collect_test_predictions(data_dir='data'):
     print(f"\nFound {len(pred_files)} test predictions")
 
     # Load test filenames
-    test_df = pd.read_csv(Path(data_dir) / 'test' / 'sample_submission.csv')
+    test_df = pd.read_csv(Path(data_dir) / 'test_data.csv')
     test_filenames = test_df['new_filename'].values
 
     # Collect predictions
