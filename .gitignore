@@ -196,6 +196,9 @@ data/test_predictions*/
 # NIH external dataset
 data/nih_*/
 
+# Raw data downloads (large zip files)
+data/raw/
+
 # Old README and planning docs (superseded)
 PROJECT_CLEANUP_PLAN.md
 BREAKTHROUGH_STRATEGY_ANALYSIS.md
