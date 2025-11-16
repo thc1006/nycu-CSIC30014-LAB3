@@ -1,0 +1,70 @@
+# Swin-Large 極限配置 - 目標 90%+
+name: "swin_large_ultimate"
+seed: 42
+
+# 模型
+model_name: "swin_large_patch4_window12_384"
+num_classes: 4
+img_size: 384
+pretrained: true
+drop_path_rate: 0.3  # Swin-Large 專用
+
+# 數據
+train_csv: "data/train_data_sample.csv"
+val_csv: "data/val_data_sample.csv"
+test_csv: "data/test_data_sample.csv"
+train_img_dir: "data/train_images"
+val_img_dir: "data/train_images"
+test_img_dir: "data/test_images"
+
+# 訓練
+epochs: 40
+batch_size: 4  # 保守 (197M 參數)
+num_workers: 4
+pin_memory: true
+
+# 優化器
+optimizer: "adamw"
+learning_rate: 0.00005  # 小 LR for large model
+weight_decay: 0.05
+betas: [0.9, 0.999]
+
+# 學習率調度
+scheduler: "cosine"
+warmup_epochs: 5
+min_lr: 0.000001
+
+# 數據增強
+mixup_prob: 0.6
+mixup_alpha: 1.2
+cutmix_prob: 0.5
+cutmix_alpha: 1.0
+random_erasing_prob: 0.3
+
+# 常規增強
+aug_rotation: 15
+aug_scale: [0.9, 1.1]
+aug_shear: 10
+brightness: 0.2
+contrast: 0.2
+
+# Loss
+loss_type: "focal"
+focal_alpha: [1.0, 1.5, 2.0, 12.0]
+focal_gamma: 3.0
+label_smoothing: 0.1
+
+# 正則化
+dropout: 0.3
+
+# SWA
+use_swa: true
+swa_start_epoch: 30
+swa_lr: 0.00002
+
+# 早停
+patience: 15
+min_delta: 0.001
+
+# 混合精度
+use_amp: true
