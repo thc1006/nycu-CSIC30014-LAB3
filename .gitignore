@@ -110,6 +110,13 @@ NYCU_LAB1_Ensemble_QuickFix_95.ipynb
 # *_backup.py
 # *_old.py
 
+# Temporary training Python scripts (auto-generated)
+train_stage1_quick_validation.py
+train_stage1_turbo.sh
+
+# Temporary source modules (experimental)
+src/lovasz_loss.py
+
 # Temporary config directories
 temp_configs_*/
 
@@ -139,6 +146,41 @@ archive/
 
 # Kaggle credentials (machine-specific)
 kaggle*.json
+
+# Claude Code directory (IDE-specific)
+.claude/
+
+# Virtual environments (Python dependencies)
+venv_*/
+venv/
+
+# Temporary training scripts (auto-generated)
+*_TRAIN*.sh
+*_AUTO*.sh
+*_BREAKTHROUGH*.sh
+*_OPTIMAL*.sh
+*_TURBO*.sh
+*turbo*.sh
+monitor_*.sh
+check_*.sh
+WATCH_*.sh
+DOWNLOAD_DATASET.sh
+INSTALL_DEPENDENCIES.sh
+TRAIN_STAGE1_5FOLD.sh
+
+# Temporary markdown documentation (superseded by CLAUDE.md)
+BREAKTHROUGH_90_ROADMAP.md
+TRAINING_RESULT_ANALYSIS.md
+TRAINING_STATUS*.md
+FINAL_RESULTS.md
+RTX5060_SOLUTION.md
+SETUP_DATA.md
+SIIM_TOP_SOLUTIONS_ANALYSIS.md
+ULTIMATE_90_PLUS_PLAN.md
+START_STAGE1_TRAINING.md
+QUICK_START_CHECKLIST.md
+DOWNLOAD_DATASET.md
+INSTALL_DEPENDENCIES.md
 
 # Data directories (from root - should be in data/)
 test_images/

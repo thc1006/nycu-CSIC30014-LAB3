@@ -49,6 +49,91 @@
 - ❌ **Fold 間方差過大**: Fold 0 (87.80%) vs Fold 2/4 (82.4%) → 偽標籤質量不一致
 - 📚 **文獻證據**: "初始網絡訓練不足 → 錯誤偽標籤 → 網絡不穩定"（PMC 2024）
 
+**🔧🔧🔧 RTX 5060 訓練環境修復 (11-16)**:
+
+**問題 1: PyTorch 2.6 不支持 RTX 5060 (Blackwell 架構)**
+```
+RuntimeError: CUDA error: no kernel image is available for execution on the device
+UserWarning: NVIDIA GeForce RTX 5060 with CUDA capability sm_120 is not compatible
+Current PyTorch supports: sm_50 sm_60 sm_70 sm_75 sm_80 sm_86 sm_90
+```
+
+**解決方案**: ✅ 升級至 PyTorch 2.9.1+cu128 (2025-11-12 發布)
+```bash
+pip uninstall -y torch torchvision torchaudio
+pip install torch==2.9.1 torchvision==0.24.1 torchaudio==2.9.1 \
+    --index-url https://download.pytorch.org/whl/cu128
+```
+
+**驗證**:
+```python
+✅ PyTorch: 2.9.1+cu128
+✅ CUDA Available: True
+✅ GPU: NVIDIA GeForce RTX 5060
+✅ CUDA Capability: (12, 0)  # 完全支持，無警告！
+```
+
+**問題 2: CSV 路徑錯誤 - FileNotFoundError**
+```
+FileNotFoundError: [Errno 2] No such file or directory: 'data/train_images/968.jpeg'
+# 實際文件在: data/val_images/968.jpeg
+```
+
+**根本原因**:
+- 訓練腳本默認使用 `train_data.csv` 和 `val_data.csv` (無 `source_dir` 列)
+- 硬編碼所有路徑為 `data/train_images/`
+- 但驗證集影像實際在 `data/val_images/`
+
+**解決方案**: ✅ 添加 `--use_kfold` 標記
+```bash
+# 錯誤方式 (缺少 --use_kfold)
+python train_stage1_quick_validation.py --fold 0 ...
+# 使用 train_data.csv (無 source_dir) → 路徑錯誤
+
+# 正確方式
+python train_stage1_quick_validation.py --fold 0 --use_kfold ...
+# 使用 fold0_train.csv 和 fold0_val.csv (有 source_dir 列) → 路徑正確
+```
+
+**問題 3: K-Fold CSV source_dir 列格式**
+```csv
+# fold0_train.csv (正確格式)
+new_filename,normal,bacteria,virus,COVID-19,source_dir,class_label
+968.jpeg,1,0,0,0,data/val_images,normal
+```
+
+**關鍵發現**:
+- K-Fold 分割會將驗證集樣本放入訓練集 (交叉驗證)
+- 必須使用 `source_dir` 列正確定位原始影像目錄
+- 訓練腳本 Dataset 類已支持 `source_dir` 列 (train_stage1_quick_validation.py:71-74)
+
+**最終訓練命令** (2025-11-16 成功啟動):
+```bash
+source venv_stage1/bin/activate && nohup python -u train_stage1_quick_validation.py \
+    --fold 0 \
+    --use_kfold \
+    --epochs 30 \
+    --optimizer ranger \
+    --loss lovasz_focal \
+    --batch_size 8 \
+    --img_size 384 \
+    --mixed_precision \
+    --mixup_prob 0.6 \
+    --num_workers 2 \
+    --output_dir outputs/stage1_fold0_rtx5060 \
+    > logs/rtx5060_final.log 2>&1 &
+```
+
+**訓練狀態** (PID: 905331):
+```
+✅ GPU: RTX 5060 @ 76-77% 利用率 (3.4GB / 8.2GB VRAM)
+✅ 數據: Fold 0 (2,717 訓練, 680 驗證)
+✅ 速度: ~42-47秒/epoch (預計 25-30 分鐘完成 30 epochs)
+✅ 進度: Epoch 2/30, Val F1: 0.2025 → 持續改善中
+```
+
+---
+
 **🚀🚀🚀 新突破策略 (11-16 基於 10+ 篇頂級論文)**:
 
 ### 完整研究報告
