@@ -1,0 +1,42 @@
+# Tuned baseline - simple ResNet18 without over-optimization
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 20                        # 增加epoch，讓模型充分訓練
+  batch_size: 16                    # 降低為16，減少顯存占用 (GPU ~3GB vs 4GB)
+  num_workers: 2                    # 降低為2，減少CPU占用，讓你的電腦保持可用
+  lr: 0.0001                        # 更低的學習率，防止過擬合
+  weight_decay: 0.0005              # 強化正則化
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 2
+  use_weighted_sampler: false       # 不用加權採樣 - 可能是問題
+  loss: ce                          # 回到簡單的交叉熵損失
+  label_smoothing: 0.1              # 標籤平滑防止過擬合
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: resnet18
+  img_size: 224                     # 回到標準大小
+
+out:
+  dir: outputs/baseline_tuned
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_baseline_tuned.csv

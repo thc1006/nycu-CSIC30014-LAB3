@@ -1,0 +1,47 @@
+# State-of-the-Art EfficientNet-V2-S for Chest X-ray Classification
+# Based on 2024 medical imaging research
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 40
+  batch_size: 32
+  num_workers: 4
+  lr: 0.001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 2
+  use_weighted_sampler: true
+  sampler_weights: [1.0, 1.5, 1.2, 10.0]
+  loss: focal
+  focal_alpha: [1.0, 1.5, 1.2, 5.0]
+  focal_gamma: 3.0
+  label_smoothing: 0.1
+
+perf:
+  amp_dtype: bfloat16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: efficientnet_v2_s
+  img_size: 384
+
+out:
+  dir: outputs/model_sota
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_sota.csv
+

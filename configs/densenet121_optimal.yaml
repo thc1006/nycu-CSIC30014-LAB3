@@ -1,0 +1,57 @@
+# DenseNet121 最優配置 - 基於2025年最新研究
+# 針對4分類胸部X光（Normal, Bacteria, Virus, COVID-19）
+# 預期分數：85-90%
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 25                        # DenseNet121需要25個epoch
+  batch_size: 32
+  num_workers: 4
+  lr: 0.0001                        # 標準學習率
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 3
+
+  # 關鍵：加權採樣和FocalLoss處理類不平衡
+  use_weighted_sampler: true
+  sampler_weights: [1.0, 1.2, 1.1, 8.0]  # COVID-19權重最高（解決0.97%問題）
+  loss: focal
+  focal_alpha: [1.0, 1.2, 1.1, 3.5]     # 與weights對應
+  focal_gamma: 2.5
+  label_smoothing: 0.1
+
+  # 增強配置
+  augmentation:
+    enable_mixup: true
+    mixup_alpha: 0.3
+    enable_cutmix: false             # DenseNet對CutMix敏感，禁用
+    enable_randaugment: true
+    histogram_equalization: true     # 重要：處理X光品質不一致
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: densenet121                # 2025年研究中最優的架構
+  img_size: 224
+
+out:
+  dir: outputs/densenet121_optimal
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_densenet121_optimal.csv

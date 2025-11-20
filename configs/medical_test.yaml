@@ -1,0 +1,32 @@
+# Quick test configuration for medical training
+
+inherits: configs/base.yaml
+
+train:
+  seed: 42
+  epochs: 2                         # Very short for testing
+  batch_size: 8                     # Small batch for RTX 3050
+  num_workers: 2
+  lr: 0.0002
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 1
+  use_weighted_sampler: true
+  loss: medical_focal
+  label_smoothing: 0.08
+  advanced_aug: false              # Disable for speed
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: false
+  tf32: medium
+
+model:
+  name: resnet18                   # Lightweight for testing
+  img_size: 224
+
+out:
+  dir: outputs/medical_test
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_test.csv

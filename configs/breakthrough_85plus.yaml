@@ -1,0 +1,51 @@
+# Breakthrough Configuration - Target 85%+
+# Key insight: strategy_B_improved achieved 83.935% by getting Bacteria right (45.1%)
+# This config amplifies that success with:
+# - Stronger focus on Bacteria class
+# - More aggressive augmentation
+# - Longer training
+# - Optimized learning rate schedule
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 30                        # Longer training (was 20-25)
+  batch_size: 32                    # Optimal batch size
+  num_workers: 4                    # Full utilization
+  lr: 0.00008                       # Fine-tuned learning rate (between aggressive & conservative)
+  weight_decay: 0.0008              # Moderate regularization
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 3                  # Longer warmup
+  use_weighted_sampler: true        # Handle class imbalance
+  sampler_weights: [1.0, 1.1, 1.0, 10.0]  # Balanced - slightly favor Bacteria (key insight!)
+  loss: focal                       # FocalLoss for imbalanced classification
+  focal_alpha: [1.0, 1.1, 1.0, 2.5]  # Moderate - slightly favor Bacteria and COVID
+  focal_gamma: 2.0
+  label_smoothing: 0.08             # Mild label smoothing
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: resnet18
+  img_size: 224
+
+out:
+  dir: outputs/breakthrough_85plus
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_breakthrough_85plus.csv

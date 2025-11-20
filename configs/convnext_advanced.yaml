@@ -1,0 +1,70 @@
+# ConvNeXt Advanced Config - Breaking through 83%
+# Based on state-of-the-art medical imaging research
+# Key insight: ConvNeXt outperforms ResNet for X-ray classification
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+  # Image preprocessing - handle variable sizes and quality
+  normalize_method: histogram_equalization  # Better for medical X-rays
+  resize_method: aspect_preserve  # Maintain aspect ratio to reduce distortion
+
+train:
+  seed: 42
+  epochs: 35                        # Longer training with ConvNeXt
+  batch_size: 24                    # Balanced for RTX 3050 (reduced from 32)
+  num_workers: 4
+  lr: 0.0001                        # Standard learning rate for ConvNeXt
+  lr_scheduler_type: cosine_warmup
+  warmup_epochs: 5                  # Longer warmup for stability
+  weight_decay: 0.0001              # ConvNeXt needs moderate regularization
+  optimizer: adamw
+  scheduler: cosine
+
+  # Advanced augmentation for medical images
+  augmentation:
+    enable_mixup: true
+    mixup_alpha: 0.2                # Mild mixup for medical data
+    enable_cutmix: true
+    cutmix_alpha: 1.0
+    enable_randaugment: true
+    randaugment_n: 2
+    randaugment_m: 9
+    # Medical-specific augmentation
+    histogram_equalization: true    # Important for X-ray quality consistency
+    elastic_deformation: true       # Realistic medical image variation
+    rotation_range: 15              # Limited rotation
+    zoom_range: [0.95, 1.05]        # Slight zoom for size variation
+
+  # Class handling
+  use_weighted_sampler: true
+  sampler_weights: [1.0, 1.2, 1.1, 12.0]  # Balanced with strong COVID-19 emphasis
+  loss: focal                       # FocalLoss handles imbalance better
+  focal_alpha: [1.0, 1.2, 1.1, 3.0]  # Proportional to weights
+  focal_gamma: 2.5                  # Stronger focus on hard examples
+  label_smoothing: 0.1              # Mild smoothing
+
+perf:
+  amp_dtype: bf16                   # Mixed precision for faster training
+  channels_last: true               # Optimize memory layout
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: convnext_tiny               # ConvNeXt-Tiny (better than ResNet18)
+  img_size: 224
+  # ConvNeXt-specific optimizations
+  drop_path_rate: 0.2               # Stochastic depth for regularization
+
+out:
+  dir: outputs/convnext_advanced
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_convnext_advanced.csv

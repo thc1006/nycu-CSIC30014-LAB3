@@ -1,0 +1,43 @@
+# Strategy 3: Aggressive Hyperparameter Tuning
+# 更大模型 + 更强正则化 (高风险高回报)
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_data.csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 25                        # 更多epochs
+  batch_size: 24                    # 中等batch
+  num_workers: 4
+  lr: 0.00005                       # 更低学习率
+  weight_decay: 0.001               # 更强正则化
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 3                  # 更长warmup
+  use_weighted_sampler: false
+  loss: ce                          # 简单ce loss
+  label_smoothing: 0.15             # 更高label smoothing
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: efficientnet_b0             # 比resnet18稍大
+  img_size: 224
+
+out:
+  dir: outputs/strategy3_aggressive
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_strategy3.csv

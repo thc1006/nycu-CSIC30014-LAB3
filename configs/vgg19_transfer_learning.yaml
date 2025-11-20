@@ -1,0 +1,64 @@
+# VGG19 Transfer Learning - 基于2024年最新研究
+# 胸部X光4分類 (Normal, Bacteria, Virus, COVID-19)
+# 預期分數: 95%+
+
+data:
+  images_dir_train: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/train_images
+  images_dir_val:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/val_images
+  images_dir_test:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/test_images
+  train_csv: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/train_data.csv
+  val_csv:   C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/val_data.csv
+  test_csv:  C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/test_csv
+  file_col: new_filename
+  label_cols: [normal, bacteria, virus, COVID-19]
+  submission_cols: [normal, bacteria, virus, COVID-19]
+  submission_file_col: new_filename
+  num_classes: 4
+
+train:
+  seed: 42
+  epochs: 30
+  batch_size: 32
+  num_workers: 4
+
+  # Transfer Learning: 用ImageNet預訓練權重
+  # 前面層凍結，只微調最後層
+  lr: 0.0001
+  weight_decay: 0.0001
+  optimizer: adamw
+  scheduler: cosine
+  warmup_epochs: 2
+
+  # 類不平衡處理
+  use_weighted_sampler: true
+  sampler_weights: [1.0, 1.2, 1.1, 8.0]
+  loss: focal
+  focal_alpha: [1.0, 1.2, 1.1, 3.5]
+  focal_gamma: 2.5
+  label_smoothing: 0.1
+
+  # 數據增強
+  augmentation:
+    enable_mixup: true
+    mixup_alpha: 0.2
+    enable_cutmix: false
+    enable_randaugment: true
+    histogram_equalization: true
+
+perf:
+  amp_dtype: bf16
+  channels_last: true
+  cudnn_benchmark: true
+  tf32: medium
+
+model:
+  name: vgg19_transfer
+  img_size: 224
+  # Transfer Learning參數
+  pretrained: true
+  freeze_backbone: false
+  fine_tune_layers: 3
+
+out:
+  dir: outputs/vgg19_transfer_learning
+  submission_path: C:/Users/thc1006/Desktop/114-1/nycu-CSIC30014-LAB3/data/submission_vgg19_transfer.csv
